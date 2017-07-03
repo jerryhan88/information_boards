@@ -21,7 +21,7 @@ dpath['qrTimeTerNumber'] = opath.join(dpath['home'], 'qrTimeTerNumber')
 dpath['qrTimeTerNumber_ap'] = opath.join(dpath['qrTimeTerNumber'], 'ap')
 #
 dpath['analysis'] = opath.join(dpath['home'], 'analysis')
-dpath['1_generalFlow'] = opath.join(dpath['home'], '1_generalFlow')
+dpath['1_generalFlow'] = opath.join(dpath['analysis'], '1_generalFlow')
 
 
 for dn in [

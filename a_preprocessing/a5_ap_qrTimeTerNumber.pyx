@@ -25,7 +25,7 @@ def process_daily(yymmdd):
     try:
         df = pd.read_csv(ifpath)
         terminals = [ter for ter in set(df['pickUpTerminal']).union(set(df['prevEndTerminal'])) if ter != 'X']
-        ofpath = opath.join(dpath['analysis'], 'whole-ap-%s.csv' % yymmdd)
+        ofpath = opath.join(dpath['qrTimeTerNumber_ap'], 'qrTimeTerNumber-ap-%s.csv' % yymmdd)
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
             new_headers = ['did',
