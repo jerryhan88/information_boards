@@ -108,4 +108,4 @@ class vehicle(object):
 
 
 if __name__ == '__main__':
-    run('0901')
+    pass
