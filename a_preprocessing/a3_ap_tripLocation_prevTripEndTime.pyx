@@ -16,8 +16,13 @@ def run(yymm):
         logger.info('handle the file; %s' % yymm)
         yy, mm = yymm[:2], yymm[-2:]
         yyyy = str(2000 + int(yy))
-        normal_fpath = opath.join(dpath['raw'], 'trips-%s-normal.csv' % yymm)
-        ext_fpath = opath.join(dpath['raw'], 'trips-%s-normal-ext.csv' % yymm)
+        # normal_fpath = opath.join(dpath['raw'], 'trips-%s-normal.csv' % yymm)
+        # ext_fpath = opath.join(dpath['raw'], 'trips-%s-normal-ext.csv' % yymm)
+
+        taxi_home = '~/../taxi'
+        normal_fpath = taxi_home + '/%s/%s/trips/trips-%s-normal.csv' % (yyyy, mm, yymm)
+        ext_fpath = taxi_home + '/%s/%s/trips/trips-%s-normal-ext.csv' % (yyyy, mm, yymm)
+
         #
         year, month = map(int, [yyyy, mm])
         ap_polygons = get_ap_polygons()
