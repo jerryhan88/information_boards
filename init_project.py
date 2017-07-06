@@ -22,6 +22,9 @@ dpath['qrTimeTerNumber_ap'] = opath.join(dpath['qrTimeTerNumber'], 'ap')
 #
 dpath['analysis'] = opath.join(dpath['home'], 'analysis')
 dpath['1_generalFlow'] = opath.join(dpath['analysis'], '1_generalFlow')
+dpath['2_immediateDecision'] = opath.join(dpath['analysis'], '2_immediateDecision')
+dpath['3_correlation'] = opath.join(dpath['analysis'], '3_correlation')
+dpath['4_hourTrend'] = opath.join(dpath['analysis'], '4_hourTrend')
 
 
 for dn in [
@@ -33,7 +36,7 @@ for dn in [
             'qrTimeTerNumber', 'qrTimeTerNumber_ap',
             #
             'analysis',
-                '1_generalFlow',
+                '1_generalFlow', '2_immediateDecision', '3_correlation', '4_hourTrend',
            ]:
     try:
         if not opath.exists(dpath[dn]):

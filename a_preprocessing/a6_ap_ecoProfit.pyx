@@ -26,10 +26,13 @@ def run(yy):
     hid = {cn: i for i, cn in enumerate(df.columns)}
     with open(ofpath, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile, lineterminator='\n')
-        new_header = list(df.columns) + ['oppoCost', 'ecoProfit']
+        new_header = list(df.columns)
+        new_header += ['oppoCost', 'ecoProfit']
+        new_header += ['sumQnum', 'pickupTQnum', 'minTerminal', 'minTQnum']
         writer.writerow(new_header)
     #
     df.sort_values(['year', 'month', 'day', 'hour'], ascending=[True] * 4)
+    terminals = set(df['pickUpTerminal'])
     for row in df.values:
         year, month, day, hour = map(int, [row[hid[cn]] for cn in ['year', 'month', 'day', 'hour']])
         pickUpTerminal = row[hid['pickUpTerminal']]
@@ -42,10 +45,23 @@ def run(yy):
         except KeyError:
             continue
         ecoProfit = fare - oppoCost
+        minTerminal, minTQnum = None, 1e400
+        pickupTQnum = -1
+        sumQnum = 0
+        for tn in terminals:
+            Qnum = row[hid[tn]]
+            if tn == pickUpTerminal:
+                assert pickupTQnum == -1
+                pickupTQnum = Qnum
+            if Qnum < minTQnum:
+                minTQnum = Qnum
+                minTerminal = tn
+            sumQnum += Qnum
         with open(ofpath, 'a') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
             new_row = [row[hid[cn]] for cn in df.columns]
             new_row += [oppoCost, ecoProfit]
+            new_row += [sumQnum, pickupTQnum, minTerminal, minTQnum]
             writer.writerow(new_row)
 
 
