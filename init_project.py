@@ -55,6 +55,16 @@ error_hours = [('9', '3', '15', '1'), ('10', '3', '17', '1'), ('10', '7', '4', '
                ]
 
 MON, TUE, WED, THR, FRI, SAT, SUN = range(7)
+DOW = {
+    MON : 'MON',
+    TUE : 'TUE',
+    WED : 'WED',
+    THR : 'THR',
+    FRI : 'FRI',
+    SAT : 'SAT',
+    SUN : 'SUN'
+    }
+
 WEEKENDS = [SAT, SUN]
 
 # Singapore Public Holidays

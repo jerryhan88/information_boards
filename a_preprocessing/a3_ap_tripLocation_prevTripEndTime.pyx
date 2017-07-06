@@ -46,14 +46,14 @@ def run(yymm):
                     day, hour = map(int, [row1[hid1[l]] for l in ['start-day', 'start-hour']])
                     dow = row1[hid1['start-dow']]
                     #
-                    need2skip = False
-                    for ys, ms, ds, hs in error_hours:
-                        yyyy0 = 2000 + int(ys)
-                        mm0, dd0, hh0 = map(int, [ms, ds, hs])
-                        if (year == yyyy0) and (month == mm0) and (day == dd0) and (hour == hh0):
-                            need2skip = True
-                            break
-                    if need2skip: continue
+                    # need2skip = False
+                    # for ys, ms, ds, hs in error_hours:
+                    #     yyyy0 = 2000 + int(ys)
+                    #     mm0, dd0, hh0 = map(int, [ms, ds, hs])
+                    #     if (year == yyyy0) and (month == mm0) and (day == dd0) and (hour == hh0):
+                    #         need2skip = True
+                    #         break
+                    # if need2skip: continue
                     dt_st = datetime.fromtimestamp(ts_st)
                     if dt_st.day == 1 and dt_st.hour <= AM5:
                         continue
