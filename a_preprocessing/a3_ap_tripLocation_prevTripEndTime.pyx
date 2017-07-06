@@ -10,6 +10,9 @@ import csv
 logger = get_logger()
 
 
+from os.path import expanduser
+
+
 def run(yymm):
     from traceback import format_exc
     try:
@@ -19,7 +22,9 @@ def run(yymm):
         # normal_fpath = opath.join(dpath['raw'], 'trips-%s-normal.csv' % yymm)
         # ext_fpath = opath.join(dpath['raw'], 'trips-%s-normal-ext.csv' % yymm)
 
-        taxi_home = '~/../taxi'
+
+        user_home = expanduser("~")
+        taxi_home = user_home + '/../taxi'
         normal_fpath = taxi_home + '/%s/%s/trips/trips-%s-normal.csv' % (yyyy, mm, yymm)
         ext_fpath = taxi_home + '/%s/%s/trips/trips-%s-normal-ext.csv' % (yyyy, mm, yymm)
 
