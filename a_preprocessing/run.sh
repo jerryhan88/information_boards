@@ -4,7 +4,8 @@
 #    python -c "from a3_ap_tripLocation_prevTripEndTime import run; run('$i')" &
 #done
 
-for i in 100{1..9} 10{11..12}; do
+for i in 090{1..9} 09{10..11}; do
+#for i in 100{1..9} 10{11..12}; do
     python -c "from a4_ap_enteringExitingTime import run; run('$i')" &
 done
 
