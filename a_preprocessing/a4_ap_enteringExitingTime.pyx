@@ -1,20 +1,25 @@
 import __init__
 from init_project import *
 #
-from _utils.logger import get_logger
-#
 from traceback import format_exc
 from bisect import bisect
 from fnmatch import fnmatch
 import csv
 
-logger = get_logger()
-
-
 
 def run(yymm):
     for fn in os.listdir(dpath['trip_ap']):
         if not fnmatch(fn, 'trip-ap-%s*.csv' % yymm):
+            continue
+        _, _, yymmdd = fn[:-len('.csv')].split('-')
+        process_daily(yymmdd)
+
+
+def run_multiple_cores(processorID, numWorkers=11):
+    for i, fn in enumerate(os.listdir(dpath['trip_ap'])):
+        if not fnmatch(fn, 'trip-ap-*.csv'):
+            continue
+        if i % numWorkers != processorID:
             continue
         _, _, yymmdd = fn[:-len('.csv')].split('-')
         process_daily(yymmdd)
@@ -36,7 +41,6 @@ def process_daily(yymmdd):
                            'year', 'month', 'day', 'hour', 'dow']
             writer.writerow(new_headers)
         #
-        logger.info('handle log file; %s' % yymmdd)
         vehicles = {}
         with open(log_fpath, 'rb') as r_csvfile:
             reader = csv.reader(r_csvfile)
@@ -50,7 +54,6 @@ def process_daily(yymmdd):
                     vehicles[vid] = vehicle(vid)
                 vehicles[vid].update_trajectory(t, apBasePos)
         #
-        logger.info('handle trip file; %s' % yymmdd)
         with open(trip_fpath, 'rb') as r_csvfile:
             reader = csv.reader(r_csvfile)
             headers = reader.next()
