@@ -1,15 +1,11 @@
 import __init__
 from init_project import *
 #
-from _utils.logger import get_logger
-#
 from traceback import format_exc
 from fnmatch import fnmatch
 from datetime import datetime
 import pandas as pd
 import csv
-
-logger = get_logger()
 
 
 def run(yymm):
@@ -18,6 +14,18 @@ def run(yymm):
             continue
         _, _, yymmdd = fn[:-len('.csv')].split('-')
         process_daily(yymmdd)
+
+
+
+def run_multiple_cores(processorID, numWorkers=11):
+    for i, fn in enumerate(os.listdir(dpath['eeTime_ap'])):
+        if not fnmatch(fn, 'eeTime-ap-*.csv'):
+            continue
+        if i % numWorkers != processorID:
+            continue
+        _, _, yymmdd = fn[:-len('.csv')].split('-')
+        process_daily(yymmdd)
+
 
 
 def process_daily(yymmdd):
@@ -39,7 +47,6 @@ def process_daily(yymmdd):
             new_headers += terminals
             writer.writerow(new_headers)
         #
-        logger.info('handle the file; %s' % yymmdd)
         with open(ifpath, 'rb') as r_csvfile:
             reader = csv.reader(r_csvfile)
             headers = reader.next()

@@ -15,4 +15,4 @@ processorID=$1
 source ~/.bashrc
 cd /scratch/ckhan.2015/information_boards/a_preprocessing
 
-python -c "from a4_ap_enteringExitingTime import run; run($processorID, 64)"
+python -c "from a5_ap_qrTimeTerNumber import run_multiple_cores; run_multiple_cores($processorID, 64)"
