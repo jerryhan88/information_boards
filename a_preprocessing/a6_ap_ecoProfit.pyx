@@ -32,7 +32,7 @@ def run(yy):
         writer.writerow(new_header)
     #
     df.sort_values(['year', 'month', 'day', 'hour'], ascending=[True] * 4)
-    terminals = set(df['pickUpTerminal'])
+    terminals = set(df['pickUpTerminal']).difference(set('X'))
     for row in df.values:
         year, month, day, hour = map(int, [row[hid[cn]] for cn in ['year', 'month', 'day', 'hour']])
         pickUpTerminal = row[hid['pickUpTerminal']]
