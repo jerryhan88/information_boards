@@ -144,8 +144,8 @@ def filtering(yy):
                                                'pickUpTerminal',
                                                     'enteringTime', 'pickupTime', 'exitingTime',
                                                'dropoffTime']]
-            new_row += [duration, fare]
             new_row += [year, month, day, hour, weekEnd]
+            new_row += [duration, fare]
             new_row += [qrTime, productivity]
             with open(filtered_fpath, 'a') as w_csvfile:
                 writer = csv.writer(w_csvfile, lineterminator='\n')
