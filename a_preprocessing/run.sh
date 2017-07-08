@@ -10,5 +10,5 @@
 #done
 
 
-python -c "from a5_ap_qrTimeTerNumber import filtering; filtering('09')" &
-python -c "from a5_ap_qrTimeTerNumber import filtering; filtering('10')" &
+python -c "from a6_ap_ecoProfit import run; run('09')" &
+python -c "from a6_ap_ecoProfit import run; run('10')" &
