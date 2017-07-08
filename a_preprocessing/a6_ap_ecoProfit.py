@@ -35,6 +35,10 @@ def run(yy):
     terminals = set(df['pickUpTerminal']).difference(set('X'))
     for row in df.values:
         year, month, day, hour = map(int, [row[hid[cn]] for cn in ['year', 'month', 'day', 'hour']])
+        print year, month, day, hour
+        assert False
+        
+        
         pickUpTerminal = row[hid['pickUpTerminal']]
         duration, qrTime, fare = [row[hid[cn]] for cn in ['duration', 'qrTime', 'fare']]
         try:
