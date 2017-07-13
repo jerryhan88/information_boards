@@ -33,13 +33,13 @@ def process_daily(yymmdd):
         ofpath = opath.join(dpath['eeTime_ap'], 'eeTime-ap-%s.csv' % yymmdd)
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
-            new_headers = ['vid', 'did',
+            new_header = ['vid', 'did',
                            'pickupTime', 'dropoffTime', 'duration', 'fare',
                            'enteringTime', 'exitingTime',
                            'pickUpTerminal',
                            'prevEndTerminal', 'prevTripEndTime',
                            'year', 'month', 'day', 'hour', 'dow']
-            writer.writerow(new_headers)
+            writer.writerow(new_header)
         #
         vehicles = {}
         with open(log_fpath, 'rb') as r_csvfile:

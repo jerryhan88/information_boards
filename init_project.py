@@ -26,6 +26,7 @@ dpath['2_immediateDecision'] = opath.join(dpath['analysis'], '2_immediateDecisio
 dpath['3_correlation'] = opath.join(dpath['analysis'], '3_correlation')
 dpath['4_hourTrend'] = opath.join(dpath['analysis'], '4_hourTrend')
 
+dpath['6_dropoffRegression'] = opath.join(dpath['analysis'], '6_dropoffRegression')
 
 for dn in [
             'home',
@@ -37,6 +38,7 @@ for dn in [
             #
             'analysis',
                 '1_generalFlow', '2_immediateDecision', '3_correlation', '4_hourTrend',
+                '6_dropoffRegression',
            ]:
     try:
         if not opath.exists(dpath[dn]):
