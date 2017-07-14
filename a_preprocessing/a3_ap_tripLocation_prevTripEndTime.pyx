@@ -4,30 +4,21 @@ from init_project import *
 from _utils.logger import get_logger
 from _utils.geoFunctions import get_ap_polygons
 #
+from os.path import expanduser
 from datetime import datetime
 import csv
 
 logger = get_logger()
-
-
-from os.path import expanduser
-
+TAXI_HOME = expanduser("~") + '/../taxi'
 
 def run(yymm):
     from traceback import format_exc
     try:
         logger.info('handle the file; %s' % yymm)
         yy, mm = yymm[:2], yymm[-2:]
-        yyyy = str(2000 + int(yy))
-        # normal_fpath = opath.join(dpath['raw'], 'trips-%s-normal.csv' % yymm)
-        # ext_fpath = opath.join(dpath['raw'], 'trips-%s-normal-ext.csv' % yymm)
-
-
-        user_home = expanduser("~")
-        taxi_home = user_home + '/../taxi'
-        normal_fpath = taxi_home + '/%s/%s/trips/trips-%s-normal.csv' % (yyyy, mm, yymm)
-        ext_fpath = taxi_home + '/%s/%s/trips/trips-%s-normal-ext.csv' % (yyyy, mm, yymm)
-
+        yyyy = '20%s' % yy
+        normal_fpath = opath.join(TAXI_HOME, '/%s/%s/trips/trips-%s-normal.csv' % (yyyy, mm, yymm))
+        ext_fpath = opath(TAXI_HOME, '/%s/%s/trips/trips-%s-normal-ext.csv' % (yyyy, mm, yymm))
         #
         year, month = map(int, [yyyy, mm])
         ap_polygons = get_ap_polygons()
