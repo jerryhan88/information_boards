@@ -18,7 +18,7 @@ def run(yymm):
         yy, mm = yymm[:2], yymm[-2:]
         yyyy = '20%s' % yy
         normal_fpath = opath.join(TAXI_HOME, '/%s/%s/trips/trips-%s-normal.csv' % (yyyy, mm, yymm))
-        ext_fpath = opath(TAXI_HOME, '/%s/%s/trips/trips-%s-normal-ext.csv' % (yyyy, mm, yymm))
+        ext_fpath = opath.join(TAXI_HOME, '/%s/%s/trips/trips-%s-normal-ext.csv' % (yyyy, mm, yymm))
         #
         year, month = map(int, [yyyy, mm])
         ap_polygons = get_ap_polygons()

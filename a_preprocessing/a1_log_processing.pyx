@@ -19,7 +19,7 @@ def run(yymm):
     logger.info('handle the file; %s' % yymm)
     yy, mm = yymm[:2], yymm[2:]
     yyyy = '20%s' % yy
-    log_fpath = opath(TAXI_HOME, '/%s/%s/logs/logs-%s-normal.csv' % (yyyy, mm, yymm))
+    log_fpath = opath.join(TAXI_HOME, '/%s/%s/logs/logs-%s-normal.csv' % (yyyy, mm, yymm))
     ap_polygons, ns_polygon = get_ap_polygons(), get_ns_polygon()
     #
     with open(log_fpath, 'rb') as r_csvfile:
