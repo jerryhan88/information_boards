@@ -32,7 +32,7 @@ def run(yymm):
                 continue
             with open(ofpath, 'a') as w_csvfile:
                 writer = csv.writer(w_csvfile, lineterminator='\n')
-                writer.writerow(row)
+                writer.writerow([row[hid[cn]] for cn in ['time', 'vid', 'did', 'state','apBasePos']])
             # if vid_lastLoc.has_key(vid):
             #     if vid_lastLoc[vid] != apBasedPos:
             #         with open(ofpath, 'a') as w_csvfile:
