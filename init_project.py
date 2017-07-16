@@ -9,7 +9,7 @@ dpath['geo'] = opath.join(taxi_data_home, 'geo')
 dpath['home'] = opath.join(taxi_data_home, 'informationBoards')
 #
 dpath['log'] = opath.join(dpath['home'], 'log')
-dpath['log_ap'] = opath.join(dpath['log'], 'ap')
+dpath['ap_dayLog'] = opath.join(dpath['log'], 'ap_dayLog')
 
 dpath['trip'] = opath.join(dpath['home'], 'trip')
 dpath['trip_ap'] = opath.join(dpath['trip'], 'ap')
@@ -31,7 +31,7 @@ dpath['6_dropoffRegression'] = opath.join(dpath['analysis'], '6_dropoffRegressio
 for dn in [
             'home',
             #
-            'log', 'log_ap',
+            'log', 'ap_dayLog',
             'trip', 'trip_ap',
             'eeTime', 'eeTime_ap',
             'qrTimeTerNumber', 'qrTimeTerNumber_ap',

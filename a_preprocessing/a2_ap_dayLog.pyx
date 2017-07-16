@@ -22,26 +22,28 @@ def run(yymm):
                 continue
             if dt.day != handling_day and dt.hour == AM5 + 1:
                 handling_day, vid_lastLoc = dt.day, {}
-                ofpath = opath.join(dpath['log_ap'], 'log-ap-%s%02d.csv' % (yymm, handling_day))
+                ofpath = opath.join(dpath['ap_dayLog'], 'ap-dayLog-%s%02d.csv' % (yymm, handling_day))
                 with open(ofpath, 'wt') as w_csvfile:
                     writer = csv.writer(w_csvfile, lineterminator='\n')
-                    new_headers = ['time', 'vid', 'did', 'apBasePos']
+                    new_headers = ['time', 'vid', 'did', 'state','apBasePos']
                     writer.writerow(new_headers)
             did = int(row[hid['did']])
             if did == -1:
                 continue
-            vid, apBasedPos = int(row[hid['vid']]), row[hid['apBasePos']]
-            if vid_lastLoc.has_key(vid):
-                if vid_lastLoc[vid] != apBasedPos:
-                    with open(ofpath, 'a') as w_csvfile:
-                        writer = csv.writer(w_csvfile, lineterminator='\n')
-                        writer.writerow([t, vid, did, apBasedPos])
-                    vid_lastLoc[vid] = apBasedPos
-            else:
-                with open(ofpath, 'a') as w_csvfile:
-                    writer = csv.writer(w_csvfile, lineterminator='\n')
-                    writer.writerow([t, vid, did, apBasedPos])
-                vid_lastLoc[vid] = apBasedPos
+            with open(ofpath, 'a') as w_csvfile:
+                writer = csv.writer(w_csvfile, lineterminator='\n')
+                writer.writerow(row)
+            # if vid_lastLoc.has_key(vid):
+            #     if vid_lastLoc[vid] != apBasedPos:
+            #         with open(ofpath, 'a') as w_csvfile:
+            #             writer = csv.writer(w_csvfile, lineterminator='\n')
+            #             writer.writerow([t, vid, did, apBasedPos])
+            #         vid_lastLoc[vid] = apBasedPos
+            # else:
+            #     with open(ofpath, 'a') as w_csvfile:
+            #         writer = csv.writer(w_csvfile, lineterminator='\n')
+            #         writer.writerow([t, vid, did, apBasedPos])
+            #     vid_lastLoc[vid] = apBasedPos
 
 
 if __name__ == '__main__':
