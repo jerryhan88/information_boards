@@ -82,8 +82,6 @@ def run(yymm):
                         tripType = int(rowE[hidE['trip-type']])
                         t2, t3 = map(eval, [rowN[hidN[cn]] for cn in ['start-time', 'end-time']])
                         t0 = vehicles[vidT].firstFreeStateTime
-                        if t0 == -1:
-                            continue
                         t1 = vehicles[vidT].firstOnCallStateTime if tripType else t2
                         vehicles[vidT].reset()
                         #
