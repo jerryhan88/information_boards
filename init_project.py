@@ -12,7 +12,9 @@ dpath['log'] = opath.join(dpath['home'], 'log')
 dpath['ap_dayLog'] = opath.join(dpath['log'], 'ap_dayLog')
 
 dpath['trip'] = opath.join(dpath['home'], 'trip')
-dpath['trip_ap'] = opath.join(dpath['trip'], 'ap')
+dpath['ap_dayTrip'] = opath.join(dpath['trip'], 'ap_dayTrip')
+
+
 
 dpath['eeTime'] = opath.join(dpath['home'], 'eeTime')
 dpath['eeTime_ap'] = opath.join(dpath['eeTime'], 'ap')
@@ -32,7 +34,10 @@ for dn in [
             'home',
             #
             'log', 'ap_dayLog',
-            'trip', 'trip_ap',
+            'trip', 'ap_dayTrip',
+
+
+
             'eeTime', 'eeTime_ap',
             'qrTimeTerNumber', 'qrTimeTerNumber_ap',
             #

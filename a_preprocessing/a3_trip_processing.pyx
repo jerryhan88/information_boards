@@ -11,6 +11,7 @@ import csv
 logger = get_logger()
 TAXI_HOME = expanduser("~") + '/../taxi'
 
+
 def run(yymm):
     from traceback import format_exc
     try:
@@ -35,7 +36,8 @@ def run(yymm):
             with open(ext_fpath, 'rb') as r_csvfile2:
                 reader2 = csv.reader(r_csvfile2)
                 headers2 = reader2.next()
-                # {'start-zone': 0, 'end-zone': 1, 'start-postal': 2, 'driver-id': 4, 'end-postal': 3}
+                # {'start-zone': 0, 'end-zone': 1, 'start-postal': 2, 'end-postal': 3,
+                # 'driver-id': 4, 'trip-type': 5}
                 hid2 = {h : i for i, h in enumerate(headers2)}
                 for row1 in reader1:
                     row2 = reader2.next()
@@ -46,15 +48,6 @@ def run(yymm):
                     ts_st, ts_et = map(eval, [row1[hid1[l]] for l in ['start-time', 'end-time']])
                     day, hour = map(int, [row1[hid1[l]] for l in ['start-day', 'start-hour']])
                     dow = row1[hid1['start-dow']]
-                    #
-                    # need2skip = False
-                    # for ys, ms, ds, hs in error_hours:
-                    #     yyyy0 = 2000 + int(ys)
-                    #     mm0, dd0, hh0 = map(int, [ms, ds, hs])
-                    #     if (year == yyyy0) and (month == mm0) and (day == dd0) and (hour == hh0):
-                    #         need2skip = True
-                    #         break
-                    # if need2skip: continue
                     dt_st = datetime.fromtimestamp(ts_st)
                     if dt_st.day == 1 and dt_st.hour <= AM5:
                         continue
@@ -62,13 +55,14 @@ def run(yymm):
                         continue
                     if dt_st.day != handling_day and dt_st.hour == AM5 + 1:
                         handling_day, vid_lastLocTime = dt_st.day, {}
-                        ofpath = opath.join(dpath['trip_ap'], 'trip-ap-%s%02d.csv' % (yymm, handling_day))
+                        ofpath = opath.join(dpath['ap_dayTrip'], 'ap-dayTrip-%s%02d.csv' % (yymm, handling_day))
                         with open(ofpath, 'wt') as w_csvfile:
                             writer = csv.writer(w_csvfile, lineterminator='\n')
                             new_headers = ['vid', 'did',
                                            'startTime', 'endTime', 'duration', 'fare',
                                            'pickUpTerminal',
                                            'prevEndTerminal', 'prevTripEndTime',
+                                           'tripType',
                                            'year', 'month', 'day', 'hour', 'dow']
                             writer.writerow(new_headers)
                     vid = int(row1[hid1['vehicle-id']])
@@ -95,6 +89,7 @@ def run(yymm):
                                    ts_st, ts_et, dur, fare,
                                    cur_start_ter,
                                    prevEndTerminal, prevTripEndTime,
+                                   row2[hid2['trip-type']],
                                    year, month, day, hour, dow]
                         writer.writerow(new_row)
                     vid_lastLocTime[vid] = (cur_end_ter, ts_et)
