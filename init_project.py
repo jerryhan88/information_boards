@@ -13,37 +13,38 @@ dpath['ap_dayLog'] = opath.join(dpath['log'], 'ap_dayLog')
 
 dpath['trip'] = opath.join(dpath['home'], 'trip')
 dpath['ap_dayTrip'] = opath.join(dpath['trip'], 'ap_dayTrip')
-
-
-
-dpath['eeTime'] = opath.join(dpath['home'], 'eeTime')
-dpath['eeTime_ap'] = opath.join(dpath['eeTime'], 'ap')
-
-dpath['qrTimeTerNumber'] = opath.join(dpath['home'], 'qrTimeTerNumber')
-dpath['qrTimeTerNumber_ap'] = opath.join(dpath['qrTimeTerNumber'], 'ap')
 #
-dpath['analysis'] = opath.join(dpath['home'], 'analysis')
-dpath['1_generalFlow'] = opath.join(dpath['analysis'], '1_generalFlow')
-dpath['2_immediateDecision'] = opath.join(dpath['analysis'], '2_immediateDecision')
-dpath['3_correlation'] = opath.join(dpath['analysis'], '3_correlation')
-dpath['4_hourTrend'] = opath.join(dpath['analysis'], '4_hourTrend')
-
-dpath['6_dropoffRegression'] = opath.join(dpath['analysis'], '6_dropoffRegression')
+#
+#
+# dpath['eeTime'] = opath.join(dpath['home'], 'eeTime')
+# dpath['eeTime_ap'] = opath.join(dpath['eeTime'], 'ap')
+#
+# dpath['qrTimeTerNumber'] = opath.join(dpath['home'], 'qrTimeTerNumber')
+# dpath['qrTimeTerNumber_ap'] = opath.join(dpath['qrTimeTerNumber'], 'ap')
+# #
+# dpath['analysis'] = opath.join(dpath['home'], 'analysis')
+# dpath['1_generalFlow'] = opath.join(dpath['analysis'], '1_generalFlow')
+# dpath['2_immediateDecision'] = opath.join(dpath['analysis'], '2_immediateDecision')
+# dpath['3_correlation'] = opath.join(dpath['analysis'], '3_correlation')
+# dpath['4_hourTrend'] = opath.join(dpath['analysis'], '4_hourTrend')
+#
+# dpath['6_dropoffRegression'] = opath.join(dpath['analysis'], '6_dropoffRegression')
 
 for dn in [
             'home',
             #
             'log', 'ap_dayLog',
-            'trip', 'ap_dayTrip',
-
-
-
-            'eeTime', 'eeTime_ap',
-            'qrTimeTerNumber', 'qrTimeTerNumber_ap',
             #
-            'analysis',
-                '1_generalFlow', '2_immediateDecision', '3_correlation', '4_hourTrend',
-                '6_dropoffRegression',
+            'trip', 'ap_dayTrip',
+            #
+            #
+            #
+            # 'eeTime', 'eeTime_ap',
+            # 'qrTimeTerNumber', 'qrTimeTerNumber_ap',
+            # #
+            # 'analysis',
+            #     '1_generalFlow', '2_immediateDecision', '3_correlation', '4_hourTrend',
+            #     '6_dropoffRegression',
            ]:
     try:
         if not opath.exists(dpath[dn]):
