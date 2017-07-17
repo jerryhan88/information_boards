@@ -5,7 +5,7 @@
 #done
 
 for i in 100{1..9} 10{11..12}; do
-    python -c "from a2_ap_dayLog import run; run('$i')" &
+    python -c "from a3_trip_processing import run; run('$i')" &
 done
 
 
