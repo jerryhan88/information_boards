@@ -71,7 +71,7 @@ def run(yymm):
                                                             'did', 'fare']]
                         new_row += [locPrevDropoff, locPickup, locDropoff]
                         new_row += [tPrevDropoff, tEnter, tExit]
-                        new_row = [row[hidT[cn]] for cn in ['tripType',
+                        new_row += [row[hidT[cn]] for cn in ['tripType',
                                                                 'tFirstFree', 'tFirstOnCall', 'tPickUp', 'tDropOff']]
                         writer.writerow(new_row)
                 vid_lastLocTime[vid] = (locDropoff, tDropOff)
