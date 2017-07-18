@@ -28,7 +28,7 @@ def run(yymm):
                 'year', 'month', 'day', 'dow', 'hour',
                 'vid', 'did', 'fare',
                 'tripType',
-                    't0', 't1', 't2', 't3',
+                    'tFirstFree','tFirstOnCall','tPickUp','tDropOff',
                 'apBaseStartPos', 'apBaseEndPos',
                 'nsBaseStartPos', 'nsBaseEndPos'
             ]

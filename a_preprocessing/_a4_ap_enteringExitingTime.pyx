@@ -52,7 +52,7 @@ def process_daily(yymmdd):
                 apBasePos = row[hid['apBasePos']]
                 if not vehicles.has_key(vid):
                     vehicles[vid] = vehicle(vid)
-                vehicles[vid].update_trajectory(t, apBasePos)
+                vehicles[vid].add_trajectory(t, apBasePos)
         #
         with open(trip_fpath, 'rb') as r_csvfile:
             reader = csv.reader(r_csvfile)

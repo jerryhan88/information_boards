@@ -25,25 +25,23 @@ def run(yymm):
                 ofpath = opath.join(dpath['ap_dayLog'], 'ap-dayLog-%s%02d.csv' % (yymm, handling_day))
                 with open(ofpath, 'wt') as w_csvfile:
                     writer = csv.writer(w_csvfile, lineterminator='\n')
-                    new_headers = ['time', 'vid', 'did', 'state','apBasePos']
+                    new_headers = ['time', 'vid', 'did', 'apBasePos']
                     writer.writerow(new_headers)
-            did = int(row[hid['did']])
+            vid, did = map(int, [row[hid[cn]] for cn in ['vid', 'did']])
+            apBasedPos = row[hid['apBasePos']]
             if did == -1:
                 continue
-            with open(ofpath, 'a') as w_csvfile:
-                writer = csv.writer(w_csvfile, lineterminator='\n')
-                writer.writerow([row[hid[cn]] for cn in ['time', 'vid', 'did', 'state','apBasePos']])
-            # if vid_lastLoc.has_key(vid):
-            #     if vid_lastLoc[vid] != apBasedPos:
-            #         with open(ofpath, 'a') as w_csvfile:
-            #             writer = csv.writer(w_csvfile, lineterminator='\n')
-            #             writer.writerow([t, vid, did, apBasedPos])
-            #         vid_lastLoc[vid] = apBasedPos
-            # else:
-            #     with open(ofpath, 'a') as w_csvfile:
-            #         writer = csv.writer(w_csvfile, lineterminator='\n')
-            #         writer.writerow([t, vid, did, apBasedPos])
-            #     vid_lastLoc[vid] = apBasedPos
+            if vid_lastLoc.has_key(vid):
+                if vid_lastLoc[vid] != apBasedPos:
+                    with open(ofpath, 'a') as w_csvfile:
+                        writer = csv.writer(w_csvfile, lineterminator='\n')
+                        writer.writerow([t, vid, did, apBasedPos])
+                    vid_lastLoc[vid] = apBasedPos
+            else:
+                with open(ofpath, 'a') as w_csvfile:
+                    writer = csv.writer(w_csvfile, lineterminator='\n')
+                    writer.writerow([t, vid, did, apBasedPos])
+                vid_lastLoc[vid] = apBasedPos
 
 
 if __name__ == '__main__':
