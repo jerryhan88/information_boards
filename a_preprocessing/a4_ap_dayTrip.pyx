@@ -24,7 +24,7 @@ def run(yymm):
                 did = int(row[hidT['did']])
                 if did == -1:
                     continue
-                day, hour = map(int, [row[hidT[cn]] for cn in ['month', 'day']])
+                day, hour = map(int, [row[hidT[cn]] for cn in ['day', 'hour']])
                 if day == 1 and hour <= AM5:
                     continue
                 if AM2 <= hour and hour <= AM5:
