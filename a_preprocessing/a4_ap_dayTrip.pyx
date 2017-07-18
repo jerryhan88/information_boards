@@ -62,6 +62,8 @@ def run(yymm):
                     continue
                 locPrevDropoff, tPrevDropoff = vid_lastLocTime[vid]
                 if not (locPrevDropoff == 'X' and locPickup == 'X'):
+                    if not vehicles.has_key(vid):
+                        continue
                     tEnter, tExit = vehicles[vid].find_eeTime(tPickUp, locPickup)
                     with open(ofpath, 'a') as w_csvfile:
                         writer = csv.writer(w_csvfile, lineterminator='\n')
