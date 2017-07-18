@@ -15,7 +15,7 @@ def run(yymm):
         logger.info('handle the file; %s' % yymm)
         trip_fpath = opath.join(dpath['trip'], 'trip-%s.csv' % yymm)
         handling_day = 0
-        vid_lastLocTime, vehicles = None, None
+        vid_lastLocTime, vehicles = {}, {}
         with open(trip_fpath, 'rb') as tripFile:
             tripReader = csv.reader(tripFile)
             tripHeader = tripReader.next()
