@@ -13,6 +13,7 @@ dpath['ap_dayLog'] = opath.join(dpath['log'], 'ap_dayLog')
 
 dpath['trip'] = opath.join(dpath['home'], 'trip')
 dpath['ap_dayTrip'] = opath.join(dpath['trip'], 'ap_dayTrip')
+dpath['ap_QTimeQNum'] = opath.join(dpath['trip'], 'ap_QTimeQNum')
 #
 #
 #

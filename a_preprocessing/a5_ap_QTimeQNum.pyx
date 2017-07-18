@@ -9,80 +9,69 @@ import csv
 
 
 def run(yymm):
-    for fn in os.listdir(dpath['eeTime_ap']):
-        if not fnmatch(fn, 'eeTime-ap-%s*.csv' % yymm):
+    for fn in os.listdir(dpath['ap_dayTrip']):
+        if not fnmatch(fn, 'ap-dayTrip-%s%*.csv' % yymm):
             continue
         _, _, yymmdd = fn[:-len('.csv')].split('-')
         process_daily(yymmdd)
-
-
-
-def run_multiple_cores(processorID, numWorkers=11):
-    for i, fn in enumerate(os.listdir(dpath['eeTime_ap'])):
-        if not fnmatch(fn, 'eeTime-ap-*.csv'):
-            continue
-        if i % numWorkers != processorID:
-            continue
-        _, _, yymmdd = fn[:-len('.csv')].split('-')
-        process_daily(yymmdd)
-
 
 
 def process_daily(yymmdd):
-    ifpath = opath.join(dpath['eeTime_ap'], 'eeTime-ap-%s.csv' % yymmdd)
+    ifpath = opath.join(dpath['ap_dayTrip'], 'ap-dayTrip-%s.csv' % yymmdd)
+    ofpath = opath.join(dpath['ap_QTimeQNum'], 'ap-QTimeQNum-%s.csv' % yymmdd)
     try:
         df = pd.read_csv(ifpath)
-        terminals = [ter for ter in set(df['pickUpTerminal']).union(set(df['prevEndTerminal'])) if ter != 'X']
-        ofpath = opath.join(dpath['qrTimeTerNumber_ap'], 'qrTimeTerNumber-ap-%s.csv' % yymmdd)
+        terminals = [ter for ter in set(df['locPrevDropoff']) if ter != 'X']
+        terminals.sort()
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
-            new_headers = ['did',
-                           'pickupTime', 'dropoffTime',
-                           'enteringTime', 'exitingTime',
-                           'pickUpTerminal',
-                           'prevEndTerminal', 'prevTripEndTime',
-                           'year', 'month', 'day', 'hour', 'dow',
-                           'duration', 'fare',
-                           'qrTime', 'productivity']
-            new_headers += terminals
-            writer.writerow(new_headers)
+            new_header = [
+                'year', 'month', 'day', 'dow', 'hour',
+                'did', 'fare',
+                'locPrevDropoff', 'locPickup', 'locDropoff',
+                'tPrevDropoff', 'tEnter', 'tExit',
+                'tripType',
+                'tFirstFree', 'tFirstOnCall', 'tPickUp', 'tDropOff'
+                ]
+            new_header += ['QTime']
+            new_header += terminals
+            writer.writerow(new_header)
         #
         with open(ifpath, 'rb') as r_csvfile:
             reader = csv.reader(r_csvfile)
             headers = reader.next()
             hid = {h: i for i, h in enumerate(headers)}
             for row in reader:
-                prevEndTerminal, pickUpTerminal = (row[hid[cn]] for cn in ['prevEndTerminal', 'pickUpTerminal'])
-                pickupTime = eval(row[hid['pickupTime']])
-                duration = eval(row[hid['duration']]) / 60.0  # Second -> Minute
-                fare = eval(row[hid['fare']]) / 100.0  # Cent -> Dollar
-                prevTripEndTime = eval(row[hid['prevTripEndTime']])
-                if prevEndTerminal == pickUpTerminal:
-                    qrTime = (pickupTime - eval(row[hid['prevTripEndTime']])) / 60.0  # Second -> Minute
+                locPrevDropoff, locPickup = [row[hid[cn]] for cn in ['locPrevDropoff', 'locPickup']]
+                tPrevDropoff, tPickUp = map(eval, [row[hid[cn]] for cn in ['tPrevDropoff', 'tPickUp']])
+                if locPickup == 'X':  # Case 1
+                    QTime = -1
                 else:
-                    if row[hid['enteringTime']] == 'inf':
-                        qrTime = 0
+                    if locPrevDropoff == locPickup:  # Case 2
+                        QTime = -2
                     else:
-                        enteringTime = eval(row[hid['enteringTime']])
-                        if enteringTime < pickupTime:
-                            qrTime = (pickupTime - enteringTime) / 60.0  # Second -> Minute
+                        if row[hid['tEnter']] == 'inf':  # Case 3
+                            QTime = -3
                         else:
-                            qrTime = 0
-                productivity = fare / float(qrTime + duration) * 60  # Dollar/Minute -> Dollar/Hour
-                new_row = [row[hid[cn]] for cn in ['did',
-                                                   'pickupTime', 'dropoffTime',
-                                                   'enteringTime', 'exitingTime',
-                                                   'pickUpTerminal',
-                                                   'prevEndTerminal', 'prevTripEndTime',
-                                                   'year', 'month', 'day', 'hour', 'dow']]
-                new_row += [duration, fare]
-                new_row += [qrTime, productivity]
+                            tEnter = eval(row[hid['tEnter']])
+                            if tPickUp < tEnter:  # Case 4
+                                QTime = -4
+                            else:
+                                QTime = tPickUp - tEnter
+                new_row = [row[hid[cn]] for cn in [
+                                                    'year', 'month', 'day', 'dow', 'hour',
+                                                    'did', 'fare',
+                                                    'locPrevDropoff', 'locPickup', 'locDropoff',
+                                                    'tPrevDropoff', 'tEnter', 'tExit',
+                                                    'tripType',
+                                                    'tFirstFree', 'tFirstOnCall', 'tPickUp', 'tDropOff']]
+                new_row += [QTime]
                 for ter in terminals:
-                    ter_df = df[(df['pickUpTerminal'] == ter)]
-                    num_entered = len(ter_df[(ter_df['enteringTime'] <= prevTripEndTime)])
-                    num_exited = len(ter_df[(ter_df['exitingTime'] <= prevTripEndTime)])
-                    QN = num_entered - num_exited
-                    new_row += [QN]
+                    ter_df = df[(df['locPickup'] == ter)]
+                    num_entered = len(ter_df[(ter_df['tEnter'] <= tPrevDropoff)])
+                    num_exited = len(ter_df[(ter_df['tExit'] <= tPrevDropoff)])
+                    QNum = num_entered - num_exited
+                    new_row += [QNum]
                 with open(ofpath, 'a') as w_csvfile:
                     writer = csv.writer(w_csvfile, lineterminator='\n')
                     writer.writerow(new_row)
