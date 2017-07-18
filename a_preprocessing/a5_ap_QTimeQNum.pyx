@@ -10,7 +10,7 @@ import csv
 
 def run(yymm):
     for fn in os.listdir(dpath['ap_dayTrip']):
-        if not fnmatch(fn, 'ap-dayTrip-%s%*.csv' % yymm):
+        if not fnmatch(fn, 'ap-dayTrip-%s*.csv' % yymm):
             continue
         _, _, yymmdd = fn[:-len('.csv')].split('-')
         process_daily(yymmdd)
