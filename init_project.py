@@ -36,7 +36,7 @@ for dn in [
             #
             'log', 'ap_dayLog',
             #
-            'trip', 'ap_dayTrip', 'ap_QidQnum'
+            'trip', 'ap_dayTrip', 'ap_QidQnum',
             #
             #
             #
