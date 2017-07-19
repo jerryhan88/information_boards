@@ -2,9 +2,7 @@ import __init__
 from init_project import *
 #
 import pandas as pd
-
-
-
+import csv
 
 
 def basicProcess(yy):
@@ -33,6 +31,31 @@ def basicProcess(yy):
     new_df['productivity'] = new_df['fare'] / new_df['cycleTime'] * MIN1
     ofpath = opath.join(dpath['analysis'], 'ap-hourProductivity-20%s.csv' % yy)
     new_df.to_csv(ofpath, index=False)
+
+
+
+def dropoffAP_dataProcess(yy):
+    ifpath = opath.join(dpath['analysis'], 'ap-hourProductivity-20%s.csv' % yy)
+    hourProductivity = {}
+    with open(ifpath, 'rb') as r_csvfile:
+        reader = csv.reader(r_csvfile)
+        headers = reader.next()
+        hid = {h: i for i, h in enumerate(headers)}
+        for row in reader:
+            year, month, day, hour = map(int, [row[hid[cn]] for cn in ['year', 'month', 'day', 'hour']])
+            hourProductivity[year, month, day, hour] = eval(row[hid['productivity']])
+
+    # economic profit!!!
+    pass
+
+
+
+
+def pickupAP_dataProcess():
+    pass
+
+
+
 
 
 
