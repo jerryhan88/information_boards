@@ -18,7 +18,7 @@ def run(yymm):
 
 def process_daily(yymmdd):
     ifpath = opath.join(dpath['ap_dayTrip'], 'ap-dayTrip-%s.csv' % yymmdd)
-    ofpath = opath.join(dpath['ap_QTimeQNum'], 'ap-QTimeQNum-%s.csv' % yymmdd)
+    ofpath = opath.join(dpath['ap_QidQnum'], 'ap-QidQnum-%s.csv' % yymmdd)
     try:
         df = pd.read_csv(ifpath)
         terminals = [ter for ter in set(df['locPrevDropoff']) if ter != 'X']
@@ -33,7 +33,7 @@ def process_daily(yymmdd):
                 'tripType',
                 'tFirstFree', 'tFirstOnCall', 'tPickUp', 'tDropOff'
                 ]
-            new_header += ['QTime']
+            new_header += ['Qid']
             new_header += terminals
             writer.writerow(new_header)
         #
@@ -45,19 +45,19 @@ def process_daily(yymmdd):
                 locPrevDropoff, locPickup = [row[hid[cn]] for cn in ['locPrevDropoff', 'locPickup']]
                 tPrevDropoff, tPickUp = map(eval, [row[hid[cn]] for cn in ['tPrevDropoff', 'tPickUp']])
                 if locPickup == 'X':  # Case 1
-                    QTime = -1
+                    Qid = -1
                 else:
                     if locPrevDropoff == locPickup:  # Case 2
-                        QTime = -2
+                        Qid = -2
                     else:
                         if row[hid['tEnter']] == 'inf':  # Case 3
-                            QTime = -3
+                            Qid = -3
                         else:
                             tEnter = eval(row[hid['tEnter']])
                             if tPickUp < tEnter:  # Case 4
-                                QTime = -4
+                                Qid = -4
                             else:
-                                QTime = tPickUp - tEnter
+                                Qid = 0
                 new_row = [row[hid[cn]] for cn in [
                                                     'year', 'month', 'day', 'dow', 'hour',
                                                     'did', 'fare',
@@ -65,13 +65,13 @@ def process_daily(yymmdd):
                                                     'tPrevDropoff', 'tEnter', 'tExit',
                                                     'tripType',
                                                     'tFirstFree', 'tFirstOnCall', 'tPickUp', 'tDropOff']]
-                new_row += [QTime]
+                new_row += [Qid]
                 for ter in terminals:
                     ter_df = df[(df['locPickup'] == ter)]
                     num_entered = len(ter_df[(ter_df['tEnter'] <= tPrevDropoff)])
                     num_exited = len(ter_df[(ter_df['tExit'] <= tPrevDropoff)])
-                    QNum = num_entered - num_exited
-                    new_row += [QNum]
+                    Qnum = num_entered - num_exited
+                    new_row += [Qnum]
                 with open(ofpath, 'a') as w_csvfile:
                     writer = csv.writer(w_csvfile, lineterminator='\n')
                     writer.writerow(new_row)
