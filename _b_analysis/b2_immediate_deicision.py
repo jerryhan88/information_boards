@@ -1,4 +1,4 @@
-import __init__
+import b_analysis
 from init_project import *
 #
 import pandas as pd
@@ -40,15 +40,14 @@ html_template = \
 
 WIDTH, HEIGHT = 600, 300
 
-
 def run():
     for yy in ['09', '10']:
-        ifpath = opath.join(dpath['analysis'], 'whole-ap-20%s.csv' % yy)
+        ifpath = opath.join(dpath['analysis'], 'decision-ap-20%s.csv' % yy)
         df = pd.read_csv(ifpath)
         group_df = df.groupby(['prevEndTerminal', 'pickUpTerminal']).count().reset_index()
         #
-        csv_ofpath = opath.join(dpath['1_generalFlow'], 'generalFlow-20%s.csv' % yy)
-        html_ofpath = opath.join(dpath['1_generalFlow'], 'generalFlow-20%s.html' % yy)
+        csv_ofpath = opath.join(dpath['2_immediateDecision'], 'immediateDecision-20%s.csv' % yy)
+        html_ofpath = opath.join(dpath['2_immediateDecision'], 'immediateDecision-20%s.html' % yy)
         with open(csv_ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
             new_headers = ['prevEndTerminal', 'pickUpTerminal', 'numTrips']
@@ -62,7 +61,6 @@ def run():
         html_str = html_template % ('prevEndTerminal', 'pickUpTerminal', 'numTrips', flow_str, WIDTH, HEIGHT)
         with open(html_ofpath, 'w') as f:
             f.write(html_str)
-
 
 if __name__ == '__main__':
     run()

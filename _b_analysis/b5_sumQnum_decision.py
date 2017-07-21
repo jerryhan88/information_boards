@@ -1,4 +1,4 @@
-import __init__
+import b_analysis
 from init_project import *
 #
 import pandas as pd
