@@ -27,6 +27,8 @@ dpath['analysis'] = opath.join(dpath['home'], 'analysis')
 dpath['pickupAP_Regression'] = opath.join(dpath['analysis'], 'pickupAP_Regression')
 dpath['dropoffAP_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_tTest')
 dpath['dropoffAP_pickupAP_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_pickupAP_tTest')
+dpath['dropoffAP_pickupX_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_pickupX_tTest')
+
 
 
 
@@ -51,7 +53,7 @@ for dn in [
             # 'qrTimeTerNumber', 'qrTimeTerNumber_ap',
             # #
             'analysis',
-                'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest',
+                'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest', 'dropoffAP_pickupX_tTest'
             #     '1_generalFlow', '2_immediateDecision', '3_correlation', '4_hourTrend',
             #     '6_dropoffRegression',
            ]:

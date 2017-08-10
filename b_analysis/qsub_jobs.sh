@@ -14,8 +14,13 @@
 #done
 
 
+#for fe_flag in wh; do
+#    for m_flag in Q I P; do
+#        qsub _cluster_run.sh $fe_flag $m_flag
+#    done
+#done
+
+
 for fe_flag in wh; do
-    for m_flag in Q I P; do
-        qsub _cluster_run.sh $fe_flag $m_flag
-    done
+    qsub _cluster_run.sh $fe_flag
 done

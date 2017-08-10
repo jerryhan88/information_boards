@@ -13,8 +13,9 @@
 source ~/.bashrc
 cd /scratch/ckhan.2015/research/information_boards/b_analysis
 
-python pickupAP_regression.py $1 $2
+#python pickupAP_regression.py $1 $2
 
-#python -c "from pickupAP_regression import $fn; $fn()"
-#python -c "from dropoffAP_tTest import $fn; $fn('$dv')"
-#python -c "from dropoffAP_pickupAP_tTest import $fn; $fn()"
+#python dropoffAP_pickupAP_tTest.py $1
+
+python dropoffAP_pickupX_tTest.py $1
+

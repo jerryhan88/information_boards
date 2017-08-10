@@ -21,12 +21,13 @@ flag_FE = {
     'd': 'did'
 }
 
+df2009, df2010 = map(pd.read_csv,
+                     [opath.join(dpath['analysis'], 'ap-pickup-2009.csv'),
+                      opath.join(dpath['analysis'], 'ap-pickup-2010.csv')])
+
 
 def regression_wf(fixedEffects, measure):
     assert fixedEffects
-    df2009, df2010 = map(pd.read_csv,
-                         [opath.join(dpath['analysis'], 'ap-pickup-2009.csv'),
-                          opath.join(dpath['analysis'], 'ap-pickup-2010.csv')])
     dv = flag_measures[measure]
     ofpath = opath.join(dpath['pickupAP_Regression'], '%s_%s.csv' % (fixedEffects, dv))
     with open(ofpath, 'wt') as w_csvfile:
@@ -67,15 +68,11 @@ def regression_wf(fixedEffects, measure):
                                 res.params['X'], res.params['const'], res.pvalues['X'], res.pvalues['const'], 
                                 res.f_pvalue, res.rsquared]
                     writer.writerow(new_row)
-                
             except:
                 continue
 
 
 def no_fixed():
-    df2009, df2010 = map(pd.read_csv,
-                         [opath.join(dpath['analysis'], 'ap-pickup-2009.csv'),
-                          opath.join(dpath['analysis'], 'ap-pickup-2010.csv')])
     for dv in ['QTime', 'durTillPickup', 'productivity']:
         ofpath = opath.join(dpath['pickupAP_Regression'], 'no_fixed_%s.csv' % dv)
         with open(ofpath, 'wt') as w_csvfile:

@@ -189,6 +189,31 @@ def dropoffAP_pickupAP_dataProcess(yy):
                 new_row = row[:] + [QTime, durTillPickup]
                 writer.writerow(new_row)
 
+
+def dropoffAP_pickupX_dataProcess(yy):
+    ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
+    ofpath = opath.join(dpath['analysis'], 'dropoffAP-pickupX-20%s.csv' % yy)
+    with open(ifpath, 'rb') as r_csvfile:
+        reader = csv.reader(r_csvfile)
+        header = reader.next()
+        hid = {h: i for i, h in enumerate(header)}
+        with open(ofpath, 'wt') as w_csvfile:
+            writer = csv.writer(w_csvfile, lineterminator='\n')
+            new_header = header[:] + ['QTime', 'durTillPickup']
+            writer.writerow(new_header)
+            for row in reader:
+                locPrevDropoff, locPickup = [row[hid[cn]] for cn in ['locPrevDropoff', 'locPickup']]
+                if locPrevDropoff == 'X':
+                    continue
+                if locPickup != 'X':
+                    continue
+                tPickUp = eval(row[hid['tPickUp']])
+                durTillPickup = (tPickUp  - eval(row[hid['tMaxFirstFreePrevDropoff']])) / MIN1
+                #
+                new_row = row[:] + [durTillPickup]
+                writer.writerow(new_row)
+
+
 if __name__ == '__main__':
     # basicProcess('09')
     # basicProcess('10')
@@ -200,4 +225,7 @@ if __name__ == '__main__':
     # pickupAP_dataProcess('10')
 
     # dropoffAP_pickupAP_dataProcess('09')
-    dropoffAP_pickupAP_dataProcess('10')
+    # dropoffAP_pickupAP_dataProcess('10')
+
+    # dropoffAP_pickupX_dataProcess('09')
+    dropoffAP_pickupX_dataProcess('10')
