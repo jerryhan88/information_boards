@@ -8,7 +8,7 @@ import csv
 def basicProcess(yy):
     ifpath = opath.join(dpath['ap_QidQnum'], 'ap-QidQnum-20%s.csv' % yy)
     df = pd.read_csv(ifpath)
-    df.sort_values(['tPickUp'], ascending=[True])
+    df = df.sort_values(['tPickUp'], ascending=[True])
     #
     df['tMaxFirstFreePrevDropoff'] = df.apply(lambda row: row['tFirstFree'] if row['tPrevDropoff'] < row['tFirstFree'] else row['tPrevDropoff'], axis=1)
     df['cycleTime'] = df['tDropOff'] - df['tMaxFirstFreePrevDropoff']
