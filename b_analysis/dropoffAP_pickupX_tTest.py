@@ -32,7 +32,7 @@ dv = 'durTillPickup'
 
 def do_tTest_wf(fixedEffects):
     if fixedEffects == 'X':
-        ofpath = opath.join(dpath['dropoffAP_pickupX_tTest'], 'X_%s.csv' % dv)
+        ofpath = opath.join(dpath['dropoffAP_pickupX_tTest'], 'X_%s_tTest.csv' % dv)
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
             writer.writerow(stats)
@@ -50,7 +50,7 @@ def do_tTest_wf(fixedEffects):
                 std2009, std2010,
                 t, p])
     else:
-        ofpath = opath.join(dpath['dropoffAP_pickupX_tTest'], '%s_%s.csv' % (fixedEffects, dv))
+        ofpath = opath.join(dpath['dropoffAP_pickupX_tTest'], '%s_%s_tTest.csv' % (fixedEffects, dv))
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
             header = []

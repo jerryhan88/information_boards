@@ -37,8 +37,8 @@ def dropoffAP_dataProcess(yy):
     ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
     df = pd.read_csv(ifpath)
     GA_df, GO_df = df[(df['locPickup'] != 'X')], df[(df['locPickup'] == 'X')]
-    GA_fpath = opath.join(dpath['analysis'], 'ap-dropoff-GA-hourProductivity-20%s.csv' % yy)
-    GO_fpath = opath.join(dpath['analysis'], 'ap-dropoff-GO-hourProductivity-20%s.csv' % yy)
+    GA_fpath = opath.join(dpath['analysis'], 'dropoffAP-GA-hourProductivity-20%s.csv' % yy)
+    GO_fpath = opath.join(dpath['analysis'], 'dropoffAP-GO-hourProductivity-20%s.csv' % yy)
     for df, ofpath in [(GA_df, GA_fpath),
                        (GO_df, GO_fpath)]:
         groupby_df = df.groupby(['year', 'month', 'day', 'hour']).sum().reset_index()
@@ -57,7 +57,7 @@ def dropoffAP_dataProcess(yy):
                 fare_cycleTime[year, month, day, hour] = eval(row[hid['productivity']])
     #
     ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
-    ofpath = opath.join(dpath['analysis'], 'ap-dropoff-20%s.csv' % yy)
+    ofpath = opath.join(dpath['analysis'], 'dropoffAP-20%s.csv' % yy)
     with open(ifpath, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         header = reader.next()
@@ -109,7 +109,7 @@ def dropoffAP_dataProcess(yy):
 
 def pickupAP_dataProcess(yy):
     ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
-    ofpath = opath.join(dpath['analysis'], 'ap-pickup-20%s.csv' % yy)
+    ofpath = opath.join(dpath['analysis'], 'pickupAP-20%s.csv' % yy)
     with open(ifpath, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         header = reader.next()
@@ -150,7 +150,7 @@ def pickupAP_dataProcess(yy):
 
 def dropoffAP_pickupAP_dataProcess(yy):
     ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
-    ofpath = opath.join(dpath['analysis'], 'ap-dropoff-pickup-20%s.csv' % yy)
+    ofpath = opath.join(dpath['analysis'], 'dropoffAP-pickupAP-20%s.csv' % yy)
     with open(ifpath, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         header = reader.next()
@@ -199,7 +199,7 @@ def dropoffAP_pickupX_dataProcess(yy):
         hid = {h: i for i, h in enumerate(header)}
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
-            new_header = header[:] + ['QTime', 'durTillPickup']
+            new_header = header[:] + ['durTillPickup']
             writer.writerow(new_header)
             for row in reader:
                 locPrevDropoff, locPickup = [row[hid[cn]] for cn in ['locPrevDropoff', 'locPickup']]
