@@ -15,15 +15,26 @@ dpath['trip'] = opath.join(dpath['home'], 'trip')
 dpath['ap_dayTrip'] = opath.join(dpath['trip'], 'ap_dayTrip')
 dpath['ap_QidQnum'] = opath.join(dpath['trip'], 'ap_QidQnum')
 #
-#
-#
-# dpath['eeTime'] = opath.join(dpath['home'], 'eeTime')
-# dpath['eeTime_ap'] = opath.join(dpath['eeTime'], 'ap')
-#
-# dpath['qrTimeTerNumber'] = opath.join(dpath['home'], 'qrTimeTerNumber')
-# dpath['qrTimeTerNumber_ap'] = opath.join(dpath['qrTimeTerNumber'], 'ap')
-# #
 dpath['analysis'] = opath.join(dpath['home'], 'analysis')
+dpath['_data'] = opath.join(dpath['analysis'], '_data')
+dpath['hourTrend'] = opath.join(dpath['analysis'], 'hourTrend')
+dpath['numTrips'] = opath.join(dpath['hourTrend'], 'numTrips')
+
+
+dpath['hourTrendPickupAP'] = opath.join(dpath['hourTrend'], 'hourTrendPickupAP')
+
+
+
+dpath['hourTrendQNum'] = opath.join(dpath['hourTrend'], 'hourTrendQNum')
+dpath['hourTrendPickupAPBefore'] = opath.join(dpath['hourTrend'], 'hourTrendPickupAPBefore')
+dpath['hourTrendDropoffAPAfter'] = opath.join(dpath['hourTrend'], 'hourTrendDropoffAPAfter')
+
+
+
+
+dpath['hourTrendQTime'] = opath.join(dpath['analysis'], 'hourTrendQnum')
+
+
 dpath['pickupAP_Regression'] = opath.join(dpath['analysis'], 'pickupAP_Regression')
 dpath['dropoffAP_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_tTest')
 dpath['dropoffAP_pickupAP_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_pickupAP_tTest')
@@ -52,7 +63,15 @@ for dn in [
             # 'eeTime', 'eeTime_ap',
             # 'qrTimeTerNumber', 'qrTimeTerNumber_ap',
             # #
-            'analysis',
+            'analysis', '_data',
+            #
+            'hourTrend',
+                'numTrips',
+                'hourTrendPickupAP',
+
+                'hourTrendQNum', 'hourTrendPickupAPBefore', 'hourTrendDropoffAPAfter',
+
+
                 'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest', 'dropoffAP_pickupX_tTest'
             #     '1_generalFlow', '2_immediateDecision', '3_correlation', '4_hourTrend',
             #     '6_dropoffRegression',

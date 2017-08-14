@@ -23,22 +23,27 @@ def basicProcess(yy):
     df = df[(df['cycleTime'] < (HOUR2 / MIN1))]
     df = df[(df['productivity'] < TH_PRODUCTIVITY)]
     #
-    ofpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
+    holidays = HOLIDAYS2009 if yy == '09' else HOLIDAYS2010
+    df['workingDay'] = df.apply(lambda row: 0 if (row['dow'] in WEEKENDS) or
+                                                 ((row['year'], row['month'], row['day']) in holidays) else 1,
+                                axis=1)
+    #
+    ofpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
     df.to_csv(ofpath, index=False)
     #
     groupby_df = df.groupby(['year', 'month', 'day', 'hour']).sum().reset_index()
     new_df = groupby_df[['year', 'month', 'day', 'hour', 'fare', 'cycleTime']]
     new_df['productivity'] = new_df['fare'] / new_df['cycleTime'] * MIN1
-    ofpath = opath.join(dpath['analysis'], 'ap-whole-hourProductivity-20%s.csv' % yy)
+    ofpath = opath.join(dpath['_data'], 'wholeAP-hourProductivity-20%s.csv' % yy)
     new_df.to_csv(ofpath, index=False)
 
 
 def dropoffAP_dataProcess(yy):
-    ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
+    ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
     df = pd.read_csv(ifpath)
     GA_df, GO_df = df[(df['locPickup'] != 'X')], df[(df['locPickup'] == 'X')]
-    GA_fpath = opath.join(dpath['analysis'], 'dropoffAP-GA-hourProductivity-20%s.csv' % yy)
-    GO_fpath = opath.join(dpath['analysis'], 'dropoffAP-GO-hourProductivity-20%s.csv' % yy)
+    GA_fpath = opath.join(dpath['_data'], 'dropoffAP-GA-hourProductivity-20%s.csv' % yy)
+    GO_fpath = opath.join(dpath['_data'], 'dropoffAP-GO-hourProductivity-20%s.csv' % yy)
     for df, ofpath in [(GA_df, GA_fpath),
                        (GO_df, GO_fpath)]:
         groupby_df = df.groupby(['year', 'month', 'day', 'hour']).sum().reset_index()
@@ -56,8 +61,8 @@ def dropoffAP_dataProcess(yy):
                 year, month, day, hour = map(int, [row[hid[cn]] for cn in ['year', 'month', 'day', 'hour']])
                 fare_cycleTime[year, month, day, hour] = eval(row[hid['productivity']])
     #
-    ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
-    ofpath = opath.join(dpath['analysis'], 'dropoffAP-20%s.csv' % yy)
+    ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
+    ofpath = opath.join(dpath['_data'], 'dropoffAP-20%s.csv' % yy)
     with open(ifpath, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         header = reader.next()
@@ -108,8 +113,8 @@ def dropoffAP_dataProcess(yy):
 
 
 def pickupAP_dataProcess(yy):
-    ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
-    ofpath = opath.join(dpath['analysis'], 'pickupAP-20%s.csv' % yy)
+    ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
+    ofpath = opath.join(dpath['_data'], 'pickupAP-20%s.csv' % yy)
     with open(ifpath, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         header = reader.next()
@@ -149,8 +154,8 @@ def pickupAP_dataProcess(yy):
 
 
 def dropoffAP_pickupAP_dataProcess(yy):
-    ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
-    ofpath = opath.join(dpath['analysis'], 'dropoffAP-pickupAP-20%s.csv' % yy)
+    ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
+    ofpath = opath.join(dpath['_data'], 'dropoffAP-pickupAP-20%s.csv' % yy)
     with open(ifpath, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         header = reader.next()
@@ -191,8 +196,8 @@ def dropoffAP_pickupAP_dataProcess(yy):
 
 
 def dropoffAP_pickupX_dataProcess(yy):
-    ifpath = opath.join(dpath['analysis'], 'ap-whole-20%s.csv' % yy)
-    ofpath = opath.join(dpath['analysis'], 'dropoffAP-pickupX-20%s.csv' % yy)
+    ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
+    ofpath = opath.join(dpath['_data'], 'dropoffAP-pickupX-20%s.csv' % yy)
     with open(ifpath, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         header = reader.next()
@@ -219,7 +224,7 @@ if __name__ == '__main__':
     # basicProcess('10')
     #
     # dropoffAP_dataProcess('09')
-    # dropoffAP_dataProcess('10')
+    dropoffAP_dataProcess('10')
     #
     # pickupAP_dataProcess('09')
     # pickupAP_dataProcess('10')
@@ -228,4 +233,4 @@ if __name__ == '__main__':
     # dropoffAP_pickupAP_dataProcess('10')
 
     # dropoffAP_pickupX_dataProcess('09')
-    dropoffAP_pickupX_dataProcess('10')
+    # dropoffAP_pickupX_dataProcess('10')

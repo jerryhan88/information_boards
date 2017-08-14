@@ -25,8 +25,8 @@ df2009X[(df2009X['hour'] == 20)]['qrTime'].mean()
 df2009O['qrTime'].mean()
 df2009O[(df2009O['hour'] == 20)]['qrTime'].mean()
 
-df2009X['hour'].hist()
-df2009O['hour'].hist()
+df2009X['hour'].hist(bins=24)
+df2009O['hour'].hist(bins=24)
 
 df2010X = df2010[(df2010['prevEndTerminal'] == 'X')]
 df2010O = df2010[(df2010['prevEndTerminal'] != 'X')]
