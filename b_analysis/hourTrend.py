@@ -12,10 +12,28 @@ _figsize = (8, 6)
 
 
 def run_numTrips():
-    def process_numTrips(_df, img_ofpath):
+    def process_numTrips_Wyear(_df, img_ofpath):
+        hdf = _df.groupby(['year', 'month', 'day', 'hour']).count()['did'].to_frame('hourNumTrips').reset_index()
+        yearHour_numTrips = {}
+        hours = sorted(list(set(hdf['hour'])))
+        for year, hour, numTrips in hdf.groupby(['year', 'hour']).mean()['hourNumTrips'].to_frame('hourAvgNumTrips').reset_index().values:
+            yearHour_numTrips[year, hour] = numTrips
+        fig = plt.figure(figsize=_figsize)
+        ax = fig.add_subplot(111)
+        ax.set_xlabel('hour')
+        ax.set_ylabel('avgNumTrips')
+        for year in [2009, 2010]:
+            plt.plot(range(len(hours)), [yearHour_numTrips[year, hour] for hour in hours])
+        plt.legend(['2009', '2010'], ncol=1, loc='upper left')
+        plt.xticks(range(len(hours)), hours)
+        plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
+    #
+    def process_numTrips_Wdow(_df, img_ofpath):
+        perHour_df = _df.groupby(['year', 'month', 'day', 'dow', 'hour']).count()['did'].to_frame('hourNumTrips').reset_index()
         dows, hours = set(), set()
         dowHour_numTrips = {}
-        for dow, hour, numTrips in _df.groupby(['dow', 'hour']).count()['did'].to_frame('numTrips').reset_index().values:
+        for dow, hour, numTrips in perHour_df.groupby(['dow', 'hour']).mean()['hourNumTrips'].to_frame('hourAvgNumTrips').reset_index().values:
+            hour = int(hour)
             dows.add(dow)
             hours.add(hour)
             k = (dow, hour)
@@ -26,273 +44,212 @@ def run_numTrips():
         fig = plt.figure(figsize=_figsize)
         ax = fig.add_subplot(111)
         ax.set_xlabel('hour')
-        ax.set_ylabel('numTrips')
+        ax.set_ylabel('AvgNumTrips')
         for dow in dows:
             plt.plot(range(len(hours)), [dowHour_numTrips[dow, hour] for hour in hours])
         plt.legend(['Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat', 'Sun'], ncol=1, loc='upper left')
         plt.xticks(range(len(hours)), hours)
+        plt.ylim((0, 1400))
         plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
     df = pd.read_csv(opath.join(dpath['_data'], 'wholeAP-2009.csv'))
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'wholeAP-2010.csv')))
     #
-    img_ofpath = opath.join(dpath['numTrips'], 'hourTrendNumTrips.pdf')
-    process_numTrips(df, img_ofpath)
+    img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdow.pdf')
+    process_numTrips_Wdow(df, img_ofpath)
+    img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWyear.pdf')
+    process_numTrips_Wyear(df, img_ofpath)
     #
-    img_ofpath = opath.join(dpath['numTrips'], 'hourTrendNumTripsDropoff.pdf')
-    process_numTrips(df[(df['locPrevDropoff'] != 'X')], img_ofpath)
+    img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdowDropoff.pdf')
+    process_numTrips_Wdow(df[(df['locPrevDropoff'] != 'X')], img_ofpath)
+    img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWyearDropoff.pdf')
+    process_numTrips_Wyear(df[(df['locPrevDropoff'] != 'X')], img_ofpath)
+    for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+        img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdowDropoff-%s.pdf' % tn)
+        process_numTrips_Wdow(df[(df['locPrevDropoff'] == tn)], img_ofpath)
+        img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWyearDropoff-%s.pdf' % tn)
+        process_numTrips_Wyear(df[(df['locPrevDropoff'] == tn)], img_ofpath)
     for year in [2009, 2010]:
-        img_ofpath = opath.join(dpath['numTrips'], 'hourTrendNumTripsDropoff%d.pdf' % year)
-        process_numTrips(df[(df['locPrevDropoff'] != 'X') & (df['year'] == year)], img_ofpath)
-
+        img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdowDropoff-%d.pdf' % year)
+        process_numTrips_Wdow(df[(df['locPrevDropoff'] != 'X') & (df['year'] == year)], img_ofpath)
+        for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+            img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdowDropoff-%d-%s.pdf' % (year, tn))
+            process_numTrips_Wdow(df[(df['locPrevDropoff'] == tn) & (df['year'] == year)], img_ofpath)
     #
-    img_ofpath = opath.join(dpath['numTrips'], 'hourTrendNumTripsPickup.pdf')
-    process_numTrips(df[(df['locPickup'] != 'X')], img_ofpath)
-    #
+    img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdowPickup.pdf')
+    process_numTrips_Wdow(df[(df['locPickup'] != 'X')], img_ofpath)
+    img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWyearPickup.pdf')
+    process_numTrips_Wyear(df[(df['locPickup'] != 'X')], img_ofpath)
+    for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+        img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdowPickup-%s.pdf' % tn)
+        process_numTrips_Wdow(df[(df['locPickup'] == tn)], img_ofpath)
+        img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWyearPickup-%s.pdf' % tn)
+        process_numTrips_Wyear(df[(df['locPickup'] == tn)], img_ofpath)
     for year in [2009, 2010]:
-        img_ofpath = opath.join(dpath['numTrips'], 'hourTrendNumTripsPickup%d.pdf' % year)
-        process_numTrips(df[(df['locPickup'] != 'X') & (df['year'] == year)], img_ofpath)
+        img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdowPickup-%d.pdf' % year)
+        process_numTrips_Wdow(df[(df['locPickup'] != 'X') & (df['year'] == year)], img_ofpath)
+        for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+            img_ofpath = opath.join(dpath['hourNumTrips'], 'hourNumTripsWdowPickup-%d-%s.pdf' % (year, tn))
+            process_numTrips_Wdow(df[(df['locPickup'] == tn) & (df['year'] == year)], img_ofpath)
 
 
-def run_QTimeTerminal():
-    m = 'QTime'
+def run_QTime():
+    def process_QTime_Wyear(_df, img_ofpath):
+        hdf = _df.groupby(['year', 'hour']).mean()['QTime'].to_frame('hourAvgQTime').reset_index()
+        hours = sorted(list(set(hdf['hour'])))
+        yearHour_QTime = {}
+        for year, hour, QTime in hdf.values:
+            yearHour_QTime[year, hour] = QTime
+        fig = plt.figure(figsize=_figsize)
+        ax = fig.add_subplot(111)
+        ax.set_xlabel('hour')
+        ax.set_ylabel('avgQTime')
+        for year in [2009, 2010]:
+            plt.plot(range(len(hours)), [yearHour_QTime[year, hour] for hour in hours])
+        plt.legend(['2009', '2010'], ncol=1, loc='upper left')
+        plt.xticks(range(len(hours)), hours)
+        plt.ylim((0, 70))
+        plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
     #
+    def process_QTime_Wdow(_df, img_ofpath):
+        hdf = _df.groupby(['dow', 'hour']).mean()['QTime'].to_frame('hourAvgQTime').reset_index()
+        dows, hours = set(), set()
+        dowHour_numTrips = {}
+        for dow, hour, QTime in hdf.values:
+            hour = int(hour)
+            dows.add(dow)
+            hours.add(hour)
+            dowHour_numTrips[dow, hour] = QTime
+        dows, hours = map(sorted, map(list, [dows, hours]))
+        fig = plt.figure(figsize=_figsize)
+        ax = fig.add_subplot(111)
+        ax.set_xlabel('hour')
+        ax.set_ylabel('AvgQTime')
+        for dow in dows:
+            plt.plot(range(len(hours)), [dowHour_numTrips[dow, hour] for hour in hours])
+        plt.legend(['Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat', 'Sun'], ncol=1, loc='upper left')
+        plt.xticks(range(len(hours)), hours)
+        plt.ylim((0, 70))
+        plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
+
     df = pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2009.csv'))
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2010.csv')))
-    img_ofpath = opath.join(dpath['hourTrendPickupAP'], 'hourTrendPickupAP-%s.pdf' % m)
-    groupby_df = df.groupby(['year', 'month', 'day', 'hour', 'locPickup']).mean().reset_index()
-    
-    yy = '09'
-    img_ofpath = opath.join(dpath['hourTrend'], 'hourTrendQTimeTerminal-20%s.pdf' % yy)
-    dfYear = groupby_df[(groupby_df['year'] == 2009)]
-    _figsize = (8, 6)
-    fig = plt.figure(figsize=_figsize)
-    fig.add_subplot(111)
-    sns.barplot(x="hour", y="QTime", hue="locPickup", hue_order = ['T1', 'T2', 'T3', 'BudgetT'], data=dfYear)
-    plt.ylim((0, 100))
-    plt.yticks(np.arange(0, 100, 20))
-    plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
     #
-    df.groupby(['year', 'hour']).std().reset_index()[['year', 'hour', 'QTime']]
-    
-    
-    
-    
-    for year, month, day, hour, locPickup, QTime in groupby_df[['year', 'month', 'day', 'hour', 'locPickup', 'QTime']].values:
-        
-        print year
-        assert False
-        records.append([yyyy, hour, i, count, count / float(hour_wholeCount[hour])])
-    
+    img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow.pdf')
+    process_QTime_Wdow(df, img_ofpath)
+    img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWyear.pdf')
+    process_QTime_Wyear(df, img_ofpath)
+    #
+    for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+        img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow-%s.pdf' % tn)
+        process_QTime_Wdow(df[(df['locPickup'] == tn)], img_ofpath)
+        img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWyear-%s.pdf' % tn)
+        process_QTime_Wyear(df[(df['locPickup'] == tn)], img_ofpath)
+    for year in [2009, 2010]:
+        img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow-%d.pdf' % year)
+        process_QTime_Wdow(df[(df['locPickup'] != 'X') & (df['year'] == year)], img_ofpath)
+        for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+            img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow-%d-%s.pdf' % (year, tn))
+            process_QTime_Wdow(df[(df['locPickup'] == tn) & (df['year'] == year)], img_ofpath)
+
+
+def run_dropoffJoinP():
+    df = pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2009.csv'))
+    df = df.append(pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2010.csv')))
+    hours = sorted(list(set(df['hour'])))
+    yearHour_percent = {}
+    for year in [2009, 2010]:
+        for hour in hours:
+            sub_df = df.loc[(df['year'] == year) & (df['hour'] == hour)]
+            yearHour_percent[year, hour] = sub_df['J'].sum() / float(len(sub_df))
+    #
+    fig = plt.figure(figsize=_figsize)
+    ax = fig.add_subplot(111)
+    ax.set_xlabel('hour')
+    ax.set_ylabel('percent')
+    for year in [2009, 2010]:
+        plt.plot(range(len(hours)), [yearHour_percent[year, hour] for hour in hours])
+    plt.legend(['2009', '2010'], ncol=1, loc='upper left')
+    plt.ylim((0.0, 1.0))
+    plt.xticks(range(len(hours)), hours)
+    img_ofpath = opath.join(dpath['hourDropoffJoinP'], 'hourDropoffJoinP.pdf')
+    plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
 
 
 def run_QNum():
-    for yy in ['09', '10']:
-        ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
-        csv_ofpath = opath.join(dpath['hourTrendQNum'], 'hourTrendQNum-20%s.csv' % yy)
-        #
-        terminals = ['T1', 'T2', 'T3', 'BudgetT']
-        labels = ['year', 'month', 'day', 'dow', 'hour', 'QNum', 'terminal']
-        records = []
-        processed_date_hour = set()
-        with open(ifpath, 'rb') as r_csvfile:
-            reader = csv.reader(r_csvfile)
-            header = reader.next()
-            hid = {h: i for i, h in enumerate(header)}
-            for row in reader:
-                year, month, day, dow, hour = map(int, [row[hid[cn]] for cn in ['year', 'month', 'day', 'dow', 'hour']])
-                k = (year, month, day, hour)
-                if k in processed_date_hour:
-                    continue
-                processed_date_hour.add(k)
-                for tn in terminals:
-                    QNum = int(row[hid[tn]])
-                    records.append([year, month, day, dow, hour, QNum, tn])
-        df = pd.DataFrame.from_records(records, columns=labels)
-        df.to_csv(csv_ofpath, index=False)
-        #
-        img_ofpath = opath.join(dpath['hourTrendQNum'], 'hourTrendQNum-20%s.pdf' % yy)
+    def process_QNum_Wterminal(_df, img_ofpath):
         _figsize = (8, 6)
         fig = plt.figure(figsize=_figsize)
         fig.add_subplot(111)
-        sns.barplot(x="hour", y="QNum", hue="terminal", data=df)
+        sns.barplot(x="hour", y="QNum", hue="terminal", data=_df)
         plt.ylim((0, 100))
         plt.yticks(np.arange(0, 100, 20))
         plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-        #
-        for dow in set(df['dow']):
-            dow_df = df[(df['dow'] == dow)]
-            img_ofpath = opath.join(dpath['hourTrendQNum'], 'hourTrendQNum-20%s-%s.pdf' % (yy, dow))
-            _figsize = (8, 6)
-            fig = plt.figure(figsize=_figsize)
-            fig.add_subplot(111)
-            sns.barplot(x="hour", y="QNum", hue="terminal", data=dow_df)
-            plt.ylim((0, 100))
-            plt.yticks(np.arange(0, 100, 20))
-            plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-
-
-
-def run_pickupAPBefore():
-    csv_ofpath = opath.join(dpath['hourTrendPickupAP'], 'hourTrendPickupAP-count-percent.csv')
-    labels = ['year', 'hour', 'beforeAP', 'count', 'percent']
-    records = []
-    for yy in ['09', '10']:
-        yyyy = int('20%s' % yy)
-        df = pd.read_csv(opath.join(dpath['_data'], 'pickupAP-20%s.csv' % yy))
-        hour_wholeCount = {hour: count for hour, count in df.groupby(['hour']).count().reset_index()[['hour', 'did']].values}
-        dfX, dfO = df[(df['locPrevDropoff'] == 'X')], df[(df['locPrevDropoff'] != 'X')]
-        for i, df_ in enumerate([dfX, dfO]):
-            groupby_df = df_.groupby(['hour']).count().reset_index()
-            for hour, count in groupby_df[['hour', 'did']].values:
-                records.append([yyyy, hour, i, count, count / float(hour_wholeCount[hour])])
-    df = pd.DataFrame.from_records(records, columns=labels)
-    df.to_csv(csv_ofpath, index=False)
-
-    for m in ['count', 'percent']:
-        img_ofpath = opath.join(dpath['hourTrendPickupAP'], 'hourTrendPickupAP-%s.pdf' % m)
-        _figsize = (8, 6)
-        fig = plt.figure(figsize=_figsize)
-        fig.add_subplot(111)
-        sns.barplot(x="hour", y=m, hue="year", data=df)
-        if m == 'percent':
-            plt.ylim((0.0, 1.0))
-        plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-
-    for i, beforeAP in enumerate(['beforeAPX', 'beforeAPO']):
-        dow_df = df[(df['beforeAP'] == i)]
-        for m in ['count', 'percent']:
-            img_ofpath = opath.join(dpath['hourTrendPickupAP'], 'hourTrendPickupAP-%s-%s.pdf' % (m, beforeAP))
-            _figsize = (8, 6)
-            fig = plt.figure(figsize=_figsize)
-            fig.add_subplot(111)
-            sns.barplot(x="hour", y=m, hue="year", data=dow_df)
-            if m == 'percent':
-                plt.ylim((0.0, 1.0))
-            plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-    hours = sorted(list(set(df.hour)))
-    for i, beforeAP in enumerate(['beforeAPX', 'beforeAPO']):
-        X, Y = [], []
-        for h in hours:
-            per2009 = df.loc[(df['beforeAP'] == i) & (df['year'] == 2009) & (df['hour'] == h)]['percent'].tolist().pop()
-            per2010 = df.loc[(df['beforeAP'] == i) & (df['year'] == 2010) & (df['hour'] == h)]['percent'].tolist().pop()
-            X.append(h)
-            Y.append(per2010 - per2009)
-        img_ofpath = opath.join(dpath['hourTrendPickupAP'], 'hourTrendPickupAP-%s-%s.pdf' % ('perDiff', beforeAP))
-        fig = plt.figure(figsize=_figsize)
-        fig.add_subplot(111)
-        plt.plot(range(len(Y)), Y)
-        plt.xticks(range(len(X)), X)
-        plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-
-
-def run_pickupAPQtime():
-    m = 'QTime'
     #
-    df = pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2009.csv'))
-    df = df.append(pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2010.csv')))
-    img_ofpath = opath.join(dpath['hourTrendPickupAP'], 'hourTrendPickupAP-%s.pdf' % m)
-    _figsize = (8, 6)
-    fig = plt.figure(figsize=_figsize)
-    fig.add_subplot(111)
-    sns.barplot(x="hour", y=m, hue="year", data=df)
-    plt.ylim((0, 60))
-    plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-    dfX, dfO = df[(df['locPrevDropoff'] == 'X')], df[(df['locPrevDropoff'] != 'X')]
-    for beforeAP, df_ in [('beforeAPX', dfX),
-                          ('beforeAPO', dfO )]:
-        img_ofpath = opath.join(dpath['hourTrendPickupAP'], 'hourTrendPickupAP-%s-%s.pdf' % (m, beforeAP))
-        _figsize = (8, 6)
-        fig = plt.figure(figsize=_figsize)
-        fig.add_subplot(111)
-        sns.barplot(x="hour", y=m, hue="year", data=df_)
-        plt.ylim((0, 60))
-        plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-
-
-def run_pickupAPQNum():
-    for yy in ['09', '10']:
-        ifpath = opath.join(dpath['_data'], 'pickupAP-20%s.csv' % yy)
-        
-        
-        csv_ofpath = opath.join(dpath['hourTrendPickupAP'], 'hourTrendPickupAPQNum-20%s.csv' % yy)
-        #
-        terminals = ['T1', 'T2', 'T3', 'BudgetT']
-        labels = ['year', 'month', 'day', 'dow', 'hour', 'QNum', 'terminal']
-        records = []
-        processed_date_hour = set()
-        with open(ifpath, 'rb') as r_csvfile:
-            reader = csv.reader(r_csvfile)
-            header = reader.next()
-            hid = {h: i for i, h in enumerate(header)}
-            for row in reader:
-                year, month, day, dow, hour = map(int, [row[hid[cn]] for cn in ['year', 'month', 'day', 'dow', 'hour']])
-                k = (year, month, day, hour)
-                if k in processed_date_hour:
-                    continue
-                processed_date_hour.add(k)
-                for tn in terminals:
-                    QNum = int(row[hid[tn]])
-                    records.append([year, month, day, dow, hour, QNum, tn])
-        df = pd.DataFrame.from_records(records, columns=labels)
-        df.to_csv(csv_ofpath, index=False)
-        #
-        img_ofpath = opath.join(dpath['hourTrendQNum'], 'hourTrendQNum-20%s.pdf' % yy)
-        _figsize = (8, 6)
-        fig = plt.figure(figsize=_figsize)
-        fig.add_subplot(111)
-        sns.barplot(x="hour", y="QNum", hue="terminal", data=df)
-        plt.ylim((0, 100))
-        plt.yticks(np.arange(0, 100, 20))
-        plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-    
-
-
-
-def run_dropoffAPAfter():
-    csv_ofpath = opath.join(dpath['hourTrendDropoffAPAfter'], 'hourTrendDropoffAPAfter.csv')
-    labels = ['year', 'hour', 'afterAP', 'count', 'percent']
-    records = []
-    for yy in ['09', '10']:
-        yyyy = int('20%s' % yy)
-        df = pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-20%s.csv' % yy))
-        hour_wholeCount = {hour: count for hour, count in df.groupby(['hour']).count().reset_index()[['hour', 'did']].values}
-        dfX, dfO = df[(df['locPickup'] == 'X')], df[(df['locPickup'] != 'X')]
-        for i, df_ in enumerate([dfX, dfO]):
-            groupby_df = df_.groupby(['hour']).count().reset_index()
-            for hour, count in groupby_df[['hour', 'did']].values:
-                records.append([yyyy, hour, i, count, count / float(hour_wholeCount[hour])])
-    df = pd.DataFrame.from_records(records, columns=labels)
-    df.to_csv(csv_ofpath, index=False)
-    for i, afterAP in enumerate(['afterAPX', 'afterAPO']):
-        dow_df = df[(df['afterAP'] == i)]
-        for m in ['count', 'percent']:
-            img_ofpath = opath.join(dpath['hourTrendDropoffAPAfter'], 'hourTrendDropoffAPAfter-%s-%s.pdf' % (m, afterAP))
-            _figsize = (8, 6)
-            fig = plt.figure(figsize=_figsize)
-            fig.add_subplot(111)
-            sns.barplot(x="hour", y=m, hue="year", data=dow_df)
-            if m == 'percent':
-                plt.ylim((0.0, 1.0))
-            plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
-    hours = sorted(list(set(df.hour)))
-    for i, afterAP in enumerate(['afterAPX', 'afterAPO']):
-        X, Y = [], []
-        for h in hours:
-            per2009 = df.loc[(df['afterAP'] == i) & (df['year'] == 2009) & (df['hour'] == h)]['percent'].tolist().pop()
-            per2010 = df.loc[(df['afterAP'] == i) & (df['year'] == 2010) & (df['hour'] == h)]['percent'].tolist().pop()
-            X.append(h)
-            Y.append(per2010 - per2009)
-        img_ofpath = opath.join(dpath['hourTrendDropoffAPAfter'], 'hourTrendDropoffAPAfter-%s-%s.pdf' % ('perDiff', afterAP))
+    def process_QNum_Wyear(_df, img_ofpath):
+        hdf = _df.groupby(['year', 'hour']).mean()['QNum'].to_frame('hourAvgQNum').reset_index()
+        hours = sorted(list(set(hdf['hour'])))
+        yearHour_QNum = {}
+        for year, hour, QNum in hdf.values:
+            yearHour_QNum[year, hour] = QNum
         fig = plt.figure(figsize=_figsize)
         ax = fig.add_subplot(111)
-        plt.plot(range(len(Y)), Y)
-        plt.xticks(range(len(X)), X)
+        ax.set_xlabel('hour')
+        ax.set_ylabel('avgQNum')
+        for year in [2009, 2010]:
+            plt.plot(range(len(hours)), [yearHour_QNum[year, hour] for hour in hours])
+        plt.legend(['2009', '2010'], ncol=1, loc='upper left')
+        plt.xticks(range(len(hours)), hours)
+        plt.ylim((0, 100))
         plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
+    #
+    df = pd.read_csv(opath.join(dpath['_data'], 'wholeAP-QNum-2009.csv'))
+    df = df.append(pd.read_csv(opath.join(dpath['_data'], 'wholeAP-QNum-2010.csv')))
+    #
+    img_ofpath = opath.join(dpath['hourQNum'], 'hourQNumWterminal.pdf')
+    process_QNum_Wterminal(df, img_ofpath)
+    for year in [2009, 2010]:
+        img_ofpath = opath.join(dpath['hourQNum'], 'hourQNumWterminal-%d.pdf' % year)
+        process_QNum_Wterminal(df[(df['year'] == year)], img_ofpath)
+    img_ofpath = opath.join(dpath['hourQNum'], 'hourQNumWyear.pdf')
+    process_QNum_Wyear(df, img_ofpath)
+    for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+        img_ofpath = opath.join(dpath['hourQNum'], 'hourQNumWyear-%s.pdf' % (tn))
+        process_QNum_Wyear(df[(df['terminal'] == tn)], img_ofpath)
+
+
+def run_productivity():
+    def process_productivity(_df, img_ofpath):
+        hdf = _df.groupby(['J', 'hour']).mean()['productivity'].to_frame('hourAvgProductivity').reset_index()
+        hours = sorted(list(set(hdf['hour'])))
+        jHour_productivity = {}
+        for j, hour, productivity in hdf.values:
+            jHour_productivity[j, hour] = productivity
+        fig = plt.figure(figsize=_figsize)
+        ax = fig.add_subplot(111)
+        ax.set_xlabel('hour')
+        ax.set_ylabel('avgProductivity')
+        for j in range(2):
+            plt.plot(range(len(hours)), [jHour_productivity[j, hour] for hour in hours])
+        plt.legend(['GO', 'GA'], ncol=1, loc='upper left')
+        plt.xticks(range(len(hours)), hours)
+        plt.ylim((10, 35))
+        plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
+    #
+    df = pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-GA-hourProductivity-2009.csv'))
+    for fn in ['dropoffAP-GA-hourProductivity-2010.csv',
+               'dropoffAP-GO-hourProductivity-2009.csv',
+               'dropoffAP-GO-hourProductivity-2010.csv']:
+        df = df.append(pd.read_csv(opath.join(dpath['_data'], fn)))
+    img_ofpath = opath.join(dpath['hourProductivity'], 'hourProductivity.pdf')
+    process_productivity(df, img_ofpath)
+    for year in [2009, 2010]:
+        img_ofpath = opath.join(dpath['hourProductivity'], 'hourProductivity-%d.pdf' % year)
+        process_productivity(df[(df['year'] == year)], img_ofpath)
 
 
 if __name__ == '__main__':
-    run_numTrips()
-    # run_pickupAPBefore()
-    # run_dropoffAPAfter()
-    # run_pickupAPQtime()
+    # run_numTrips()
+    # run_QTime()
+    # run_dropoffJoinP()
     # run_QNum()
+    run_productivity()

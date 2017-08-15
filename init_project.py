@@ -18,7 +18,20 @@ dpath['ap_QidQnum'] = opath.join(dpath['trip'], 'ap_QidQnum')
 dpath['analysis'] = opath.join(dpath['home'], 'analysis')
 dpath['_data'] = opath.join(dpath['analysis'], '_data')
 dpath['hourTrend'] = opath.join(dpath['analysis'], 'hourTrend')
-dpath['numTrips'] = opath.join(dpath['hourTrend'], 'numTrips')
+dpath['hourNumTrips'] = opath.join(dpath['hourTrend'], 'hourNumTrips')
+dpath['hourQTime'] = opath.join(dpath['hourTrend'], 'hourQTime')
+dpath['hourDropoffJoinP'] = opath.join(dpath['hourTrend'], 'hourDropoffJoinP')
+dpath['hourQNum'] = opath.join(dpath['hourTrend'], 'hourQNum')
+dpath['hourProductivity'] = opath.join(dpath['hourTrend'], 'hourProductivity')
+
+
+
+dpath['monthTrend'] = opath.join(dpath['analysis'], 'monthTrend')
+dpath['monthNumTrips'] = opath.join(dpath['monthTrend'], 'monthNumTrips')
+dpath['monthAvgQTime'] = opath.join(dpath['monthTrend'], 'monthAvgQTime')
+dpath['monthDropoffJoinP'] = opath.join(dpath['monthTrend'], 'monthDropoffJoinP')
+
+
 
 
 dpath['hourTrendPickupAP'] = opath.join(dpath['hourTrend'], 'hourTrendPickupAP')
@@ -43,38 +56,23 @@ dpath['dropoffAP_pickupX_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_pick
 
 
 
-
-# dpath['1_generalFlow'] = opath.join(dpath['analysis'], '1_generalFlow')
-# dpath['2_immediateDecision'] = opath.join(dpath['analysis'], '2_immediateDecision')
-# dpath['3_correlation'] = opath.join(dpath['analysis'], '3_correlation')
-# dpath['4_hourTrend'] = opath.join(dpath['analysis'], '4_hourTrend')
-#
-# dpath['6_dropoffRegression'] = opath.join(dpath['analysis'], '6_dropoffRegression')
-
 for dn in [
             'home',
             #
             'log', 'ap_dayLog',
             #
             'trip', 'ap_dayTrip', 'ap_QidQnum',
-            #
-            #
-            #
-            # 'eeTime', 'eeTime_ap',
-            # 'qrTimeTerNumber', 'qrTimeTerNumber_ap',
-            # #
+
             'analysis', '_data',
             #
             'hourTrend',
-                'numTrips',
-                'hourTrendPickupAP',
+                'hourNumTrips', 'hourQTime', 'hourDropoffJoinP', 'hourQNum', 'hourProductivity',
+            'monthTrend',
+                'monthNumTrips', 'monthAvgQTime', 'monthDropoffJoinP',
 
-                'hourTrendQNum', 'hourTrendPickupAPBefore', 'hourTrendDropoffAPAfter',
 
 
-                'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest', 'dropoffAP_pickupX_tTest'
-            #     '1_generalFlow', '2_immediateDecision', '3_correlation', '4_hourTrend',
-            #     '6_dropoffRegression',
+            'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest', 'dropoffAP_pickupX_tTest',
            ]:
     try:
         if not opath.exists(dpath[dn]):
