@@ -17,35 +17,29 @@ dpath['ap_QidQnum'] = opath.join(dpath['trip'], 'ap_QidQnum')
 #
 dpath['analysis'] = opath.join(dpath['home'], 'analysis')
 dpath['_data'] = opath.join(dpath['analysis'], '_data')
-dpath['hourTrend'] = opath.join(dpath['analysis'], 'hourTrend')
-dpath['hourNumTrips'] = opath.join(dpath['hourTrend'], 'hourNumTrips')
-dpath['hourQTime'] = opath.join(dpath['hourTrend'], 'hourQTime')
-dpath['hourDropoffJoinP'] = opath.join(dpath['hourTrend'], 'hourDropoffJoinP')
-dpath['hourQNum'] = opath.join(dpath['hourTrend'], 'hourQNum')
-dpath['hourProductivity'] = opath.join(dpath['hourTrend'], 'hourProductivity')
-
-
-
+#
 dpath['monthTrend'] = opath.join(dpath['analysis'], 'monthTrend')
 dpath['monthNumTrips'] = opath.join(dpath['monthTrend'], 'monthNumTrips')
 dpath['monthAvgQTime'] = opath.join(dpath['monthTrend'], 'monthAvgQTime')
-dpath['monthDropoffJoinP'] = opath.join(dpath['monthTrend'], 'monthDropoffJoinP')
+dpath['monthQRatio'] = opath.join(dpath['monthTrend'], 'monthQRatio')
+#
+dpath['hourTrend'] = opath.join(dpath['analysis'], 'hourTrend')
+dpath['hourNumTrips'] = opath.join(dpath['hourTrend'], 'hourNumTrips')
+dpath['hourQTime'] = opath.join(dpath['hourTrend'], 'hourQTime')
+dpath['hourQRatio'] = opath.join(dpath['hourTrend'], 'hourQRatio')
+dpath['hourQNum'] = opath.join(dpath['hourTrend'], 'hourQNum')
+dpath['hourProductivity'] = opath.join(dpath['hourTrend'], 'hourProductivity')
+#
+dpath['hypothesisTest'] = opath.join(dpath['analysis'], 'hypothesisTest')
+dpath['hJoinQRatio'] = opath.join(dpath['analysis'], 'hJoinQRatio')
 
 
 
 
-dpath['hourTrendPickupAP'] = opath.join(dpath['hourTrend'], 'hourTrendPickupAP')
-
-
-
-dpath['hourTrendQNum'] = opath.join(dpath['hourTrend'], 'hourTrendQNum')
-dpath['hourTrendPickupAPBefore'] = opath.join(dpath['hourTrend'], 'hourTrendPickupAPBefore')
-dpath['hourTrendDropoffAPAfter'] = opath.join(dpath['hourTrend'], 'hourTrendDropoffAPAfter')
 
 
 
 
-dpath['hourTrendQTime'] = opath.join(dpath['analysis'], 'hourTrendQnum')
 
 
 dpath['pickupAP_Regression'] = opath.join(dpath['analysis'], 'pickupAP_Regression')
@@ -65,14 +59,17 @@ for dn in [
 
             'analysis', '_data',
             #
-            'hourTrend',
-                'hourNumTrips', 'hourQTime', 'hourDropoffJoinP', 'hourQNum', 'hourProductivity',
             'monthTrend',
-                'monthNumTrips', 'monthAvgQTime', 'monthDropoffJoinP',
+                'monthNumTrips', 'monthAvgQTime', 'monthQRatio',
+            #
+            'hourTrend',
+                'hourNumTrips', 'hourQTime', 'hourQRatio', 'hourQNum', 'hourProductivity',
+            #
+            'hypothesisTest',
+                'hJoinQRatio',
 
 
-
-            'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest', 'dropoffAP_pickupX_tTest',
+            # 'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest', 'dropoffAP_pickupX_tTest',
            ]:
     try:
         if not opath.exists(dpath[dn]):
@@ -141,3 +138,48 @@ HOUR1 = 3600
 HOUR2 = HOUR1 * 2
 MIN1 = 60.0
 CENT = 100.0
+
+
+
+_rgb = lambda r, g, b: (r / float(255), g / float(255), b / float(255))
+clists = (
+    'blue', 'green', 'red', 'cyan', 'magenta', 'black',
+    _rgb(255, 165, 0),  # orange
+    _rgb(238, 130, 238),  # violet
+    _rgb(255, 228, 225),  # misty rose
+    _rgb(127, 255, 212),  # aqua-marine
+    'yellow',
+    _rgb(220, 220, 220),  # gray
+    _rgb(255, 165, 0),  # orange
+    'black'
+)
+mlists = (
+    'o',  #    circle
+    'v',  #    triangle_down
+    '^',  #    triangle_up
+    '<',  #    triangle_left
+    '>',  #    triangle_right
+    's',  #    square
+    'p',  #    pentagon
+    '*',  #    star
+    '+',  #    plus
+    'x',  #    x
+    'D',  #    diamond
+    'h',  #    hexagon1
+    '1',  #    tri_down
+    '2',  #    tri_up
+    '3',  #    tri_left
+    '4',  #    tri_right
+    '8',  #    octagon
+    'H',  #    hexagon2
+    'd',  #    thin_diamond
+    '|',  #    vline
+    '_',  #    hline
+    '.',  #    point
+    ',',  #    pixel
+
+    'D',  #    diamond
+    '8',  #    octagon
+    )
+figsize = (8, 6)
+terminal_order = ['T1', 'T2', 'T3', 'BudgetT']

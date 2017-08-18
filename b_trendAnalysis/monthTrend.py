@@ -1,13 +1,9 @@
 import __init__
 from init_project import *
 #
+import seaborn as sns; sns.set_style("whitegrid")
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
-import csv
-
-
-_figsize = (8, 6)
 
 
 def run_numTrips():
@@ -23,7 +19,7 @@ def run_numTrips():
             if not yearMonth_numTrips.has_key(k):
                 yearMonth_numTrips[k] = 0
             yearMonth_numTrips[k] += numTrips
-        fig = plt.figure(figsize=_figsize)
+        fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot(111)
         ax.set_xlabel('month')
         ax.set_ylabel('SumNumTrips')
@@ -37,17 +33,17 @@ def run_numTrips():
     df = pd.read_csv(opath.join(dpath['_data'], 'wholeAP-2009.csv'))
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'wholeAP-2010.csv')))
     #
-    # img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTrips.pdf')
-    # process_numTrips_Wyear(df, img_ofpath)
-    #
-    # img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTripsPickup.pdf')
-    # process_numTrips_Wyear(df[(df['locPickup'] != 'X')], img_ofpath)
-    # for tn in ['T1', 'T2', 'T3', 'BudgetT']:
-    #     img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTripsPickup-%s.pdf' % tn)
-    #     process_numTrips_Wyear(df[(df['locPickup'] == tn)], img_ofpath, (10000, 80000))
-    #
-    # img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTripsDropoff.pdf')
-    # process_numTrips_Wyear(df[(df['locPrevDropoff'] != 'X')], img_ofpath)
+    img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTrips.pdf')
+    process_numTrips_Wyear(df, img_ofpath)
+
+    img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTripsPickup.pdf')
+    process_numTrips_Wyear(df[(df['locPickup'] != 'X')], img_ofpath)
+    for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+        img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTripsPickup-%s.pdf' % tn)
+        process_numTrips_Wyear(df[(df['locPickup'] == tn)], img_ofpath, (10000, 80000))
+
+    img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTripsDropoff.pdf')
+    process_numTrips_Wyear(df[(df['locPrevDropoff'] != 'X')], img_ofpath)
     for tn in ['T1', 'T2', 'T3', 'BudgetT']:
         img_ofpath = opath.join(dpath['monthNumTrips'], 'monthNumTripsDropoff-%s.pdf' % tn)
         process_numTrips_Wyear(df[(df['locPrevDropoff'] == tn)], img_ofpath, (18000, 120000))
@@ -67,7 +63,7 @@ def run_QTime():
             if not yearMonth_numTrips.has_key(k):
                 yearMonth_numTrips[k] = 0
             yearMonth_numTrips[k] += numTrips
-        fig = plt.figure(figsize=_figsize)
+        fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot(111)
         ax.set_xlabel('month')
         ax.set_ylabel('AvgQTime')
@@ -87,8 +83,8 @@ def run_QTime():
         process_Qtime(df[(df['locPickup'] == tn)], img_ofpath)
 
 
-def run_dropoffJoinP():
-    def process_dropoffJoinP(_df, img_ofpath):
+def run_QRatio():
+    def process_QRatio(_df, img_ofpath):
         month2009 = set(_df[(_df['year'] == 2009)]['month'])
         month2010 = set(_df[(_df['year'] == 2010)]['month'])
         bothYearMonth = sorted(list(month2009.intersection(month2010)))
@@ -99,29 +95,29 @@ def run_dropoffJoinP():
         for year in [2009, 2010]:
             for month in months:
                 sub_df = _df.loc[(_df['year'] == year) & (_df['month'] == month)]
-                yearMonth_percent[year, month] = sub_df['J'].sum() / float(len(sub_df))
+                yearMonth_percent[year, month] = (sub_df['GA'].sum() / float(len(sub_df))) * 100
         #
-        fig = plt.figure(figsize=_figsize)
+        fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot(111)
         ax.set_xlabel('month')
         ax.set_ylabel('percent')
-        for year in [2009, 2010]:
-            plt.plot(range(len(months)), [yearMonth_percent[year, month] for month in months])
+        for i, year in enumerate([2009, 2010]):
+            plt.plot(range(len(months)), [yearMonth_percent[year, month] for month in months], color=clists[i], marker=mlists[i])
         plt.legend(['2009', '2010'], ncol=1, loc='upper left')
-        plt.ylim((0.0, 1.0))
+        plt.ylim((0, 100))
         plt.xticks(range(len(months)), months)
         plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
     #
     df = pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2009.csv'))
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2010.csv')))
     #
-    img_ofpath = opath.join(dpath['monthDropoffJoinP'], 'monthDropoffJoinP.pdf')
-    process_dropoffJoinP(df, img_ofpath)
+    img_ofpath = opath.join(dpath['monthQRatio'], 'monthQRatio.pdf')
+    process_QRatio(df, img_ofpath)
     for tn in ['T1', 'T2', 'T3', 'BudgetT']:
-        img_ofpath = opath.join(dpath['monthDropoffJoinP'], 'monthDropoffJoinP-%s.pdf' % tn)
-        process_dropoffJoinP(df[(df['locPrevDropoff'] == tn)], img_ofpath)
+        img_ofpath = opath.join(dpath['monthQRatio'], 'monthQRatio-%s.pdf' % tn)
+        process_QRatio(df[(df['locPrevDropoff'] == tn)], img_ofpath)
 
 if __name__ == '__main__':
     # run_numTrips()
     # run_QTime()
-    run_dropoffJoinP()
+    run_QRatio()

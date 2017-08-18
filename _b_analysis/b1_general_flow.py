@@ -1,4 +1,4 @@
-import b_analysis
+import h_hypothesisTest
 from init_project import *
 #
 import pandas as pd
