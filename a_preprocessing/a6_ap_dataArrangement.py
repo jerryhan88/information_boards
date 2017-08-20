@@ -93,7 +93,7 @@ def dropoffAP_dataProcess(yy):
         hid = {h: i for i, h in enumerate(header)}
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
-            new_header = header[:] + ['QTime', 'durTillPickup', 'oppoCost', 'ecoProfit', 'GA']
+            new_header = header[:] + ['QTime', 'durTillPickup', 'oppoCost', 'ecoProfit', 'GA', 'QScore']
             writer.writerow(new_header)
             for row in reader:
                 locPrevDropoff, locPickup = [row[hid[cn]] for cn in ['locPrevDropoff', 'locPickup']]
@@ -103,14 +103,16 @@ def dropoffAP_dataProcess(yy):
                 Qid = int(row[hid['Qid']])
                 fare, cycleTime, tPickUp = map(eval, [row[hid[cn]] for cn in ['fare', 'cycleTime', 'tPickUp']])
                 durTillPickup = (tPickUp  - eval(row[hid['tMaxFirstFreePrevDropoff']])) / MIN1
+                try:
+                    productivity_GA = GA_hourProductivity[year, month, day, hour]
+                    productivity_GO = GO_hourProductivity[year, month, day, hour]
+                except KeyError:
+                    continue
                 if locPickup == 'X':
                     GA = 0
                     assert Qid == -1
                     QTime = -1
-                    try:
-                        oppoCost = (cycleTime / MIN1) * GA_hourProductivity[year, month, day, hour]
-                    except KeyError:
-                        continue
+                    oppoCost = (cycleTime / MIN1) * productivity_GA
                 else:
                     GA = 1
                     if locPrevDropoff == locPickup:
@@ -129,23 +131,27 @@ def dropoffAP_dataProcess(yy):
                                 QTime = (tPickUp - tEnter) / MIN1
                     if cycleTime < QTime:
                         continue
-                    oppoCost = (cycleTime / MIN1) * GO_hourProductivity[year, month, day, hour]
+                    oppoCost = (cycleTime / MIN1) * productivity_GO
                 ecoProfit = fare - oppoCost
+                if productivity_GA > productivity_GO:
+                    QScore = 1 if GA == 1 else 0
+                else:
+                    QScore = 0 if GA == 1 else 1
                 #
-                new_row = row[:] + [QTime, durTillPickup, oppoCost, ecoProfit, GA]
+                new_row = row + [QTime, durTillPickup, oppoCost, ecoProfit, GA, QScore]
                 writer.writerow(new_row)
 
 
 def pickupAP_dataProcess(yy):
     ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
-    ofpath = opath.join(dpath['_data'], 'pickupAP-20%s.csv' % yy)
+    pickupAP_ofpath = opath.join(dpath['_data'], 'pickupAP-20%s.csv' % yy)
     with open(ifpath, 'rb') as r_csvfile:
         reader = csv.reader(r_csvfile)
         header = reader.next()
         hid = {h: i for i, h in enumerate(header)}
-        with open(ofpath, 'wt') as w_csvfile:
+        with open(pickupAP_ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
-            new_header = header[:] + ['QTime', 'durTillPickup', 'FA']
+            new_header = header + ['QTime', 'durTillPickup', 'FA']
             writer.writerow(new_header)
             for row in reader:
                 locPrevDropoff, locPickup = [row[hid[cn]] for cn in ['locPrevDropoff', 'locPickup']]
@@ -175,82 +181,42 @@ def pickupAP_dataProcess(yy):
                 #
                 new_row = row[:] + [QTime, durTillPickup, FA]
                 writer.writerow(new_row)
-    df = pd.read_csv(ofpath)
-    ofpath = opath.join(dpath['_data'], 'pickupAP-hourQTime-20%s.csv' % yy)
+    df = pd.read_csv(pickupAP_ofpath)
     gdf = df.groupby(['year', 'month', 'day', 'hour', 'locPickup']).mean()['QTime'].to_frame('avgQTime').reset_index()
-    gdf.to_csv(ofpath, index=False)
-    FA_df, FO_df = df[(df['locPrevDropoff'] != 'X')], df[(df['locPrevDropoff'] == 'X')]
-    FA_fpath = opath.join(dpath['_data'], 'pickupAP-FA-hourQTime-20%s.csv' % yy)
-    FO_fpath = opath.join(dpath['_data'], 'pickupAP-FO-hourQTime-20%s.csv' % yy)
-    for df, ofpath in [(FA_df, FA_fpath),
-                       (FO_df, FO_fpath)]:
-        gdf = df.groupby(['year', 'month', 'day', 'hour', 'locPickup']).mean()['QTime'].to_frame('avgQTime').reset_index()
-        gdf.to_csv(ofpath, index=False)
-
-def dropoffAP_pickupAP_dataProcess(yy):
-    ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
-    ofpath = opath.join(dpath['_data'], 'dropoffAP-pickupAP-20%s.csv' % yy)
-    with open(ifpath, 'rb') as r_csvfile:
-        reader = csv.reader(r_csvfile)
-        header = reader.next()
-        hid = {h: i for i, h in enumerate(header)}
-        with open(ofpath, 'wt') as w_csvfile:
+    dateTerminal_avgQTime = {}
+    dates, terminals = set(), set()
+    for year, month, day, hour, locPickup, avgQTime in gdf.values:
+        date = (year, month, day, hour)
+        dates.add(date)
+        terminals.add(locPickup)
+        dateTerminal_avgQTime[date, locPickup] = avgQTime
+    pickupAP_QScore_ofpath = opath.join(dpath['_data'], 'pickupAP-QScore-20%s.csv' % yy)
+    dates, terminals = map(sorted, map(list, [dates, terminals]))
+    with open(pickupAP_QScore_ofpath, 'wt') as w_csvfile:
+        writer = csv.writer(w_csvfile, lineterminator='\n')
+        new_header = ['year', 'month', 'day', 'hour'] + terminals
+        writer.writerow(new_header)
+    terminalQScore = {}
+    for date in dates:
+        year, month, day, hour = date
+        terminalAvgQtime = []
+        for tn in terminals:
+            try:
+                terminalAvgQtime.append((dateTerminal_avgQTime[date, tn], tn))
+            except KeyError:
+                terminalAvgQtime.append((1e400, tn))
+        terminalAvgQtime.sort(reverse=True)
+        for i, (_, tn) in enumerate(terminalAvgQtime):
+            terminalQScore[year, month, day, hour, tn] = i
+        with open(pickupAP_QScore_ofpath, 'a') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
-            new_header = header[:] + ['QTime', 'durTillPickup']
-            writer.writerow(new_header)
-            for row in reader:
-                locPrevDropoff, locPickup = [row[hid[cn]] for cn in ['locPrevDropoff', 'locPickup']]
-                if locPrevDropoff == 'X':
-                    continue
-                if locPickup == 'X':
-                    continue
-                Qid = int(row[hid['Qid']])
-                assert Qid != -1
-                tPickUp = eval(row[hid['tPickUp']])
-                if locPrevDropoff == locPickup:
-                    assert Qid == -2
-                    QTime = (tPickUp - eval(row[hid['tPrevDropoff']])) / MIN1
-                else:
-                    if row[hid['tEnter']] == 'inf':
-                        assert Qid == -3
-                        continue
-                    else:
-                        tEnter = eval(row[hid['tEnter']])
-                        if tPickUp < tEnter:  # Case 4
-                            assert Qid == -4
-                            continue
-                        else:
-                            QTime = (tPickUp - tEnter) / MIN1
-                if eval(row[hid['cycleTime']]) < QTime:
-                    continue
-                durTillPickup = (tPickUp  - eval(row[hid['tMaxFirstFreePrevDropoff']])) / MIN1
-                #
-                new_row = row[:] + [QTime, durTillPickup]
-                writer.writerow(new_row)
-
-
-def dropoffAP_pickupX_dataProcess(yy):
-    ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
-    ofpath = opath.join(dpath['_data'], 'dropoffAP-pickupX-20%s.csv' % yy)
-    with open(ifpath, 'rb') as r_csvfile:
-        reader = csv.reader(r_csvfile)
-        header = reader.next()
-        hid = {h: i for i, h in enumerate(header)}
-        with open(ofpath, 'wt') as w_csvfile:
-            writer = csv.writer(w_csvfile, lineterminator='\n')
-            new_header = header[:] + ['durTillPickup']
-            writer.writerow(new_header)
-            for row in reader:
-                locPrevDropoff, locPickup = [row[hid[cn]] for cn in ['locPrevDropoff', 'locPickup']]
-                if locPrevDropoff == 'X':
-                    continue
-                if locPickup != 'X':
-                    continue
-                tPickUp = eval(row[hid['tPickUp']])
-                durTillPickup = (tPickUp  - eval(row[hid['tMaxFirstFreePrevDropoff']])) / MIN1
-                #
-                new_row = row[:] + [durTillPickup]
-                writer.writerow(new_row)
+            new_row = [year, month, day, hour]
+            new_row += [terminalQScore[year, month, day, hour, tn] for tn in terminals]
+            writer.writerow(new_row)
+    #
+    df['QScore'] = df.apply(lambda row: terminalQScore[row['year'], row['month'], row['day'], row['hour'], row['locPickup']],
+                            axis=1)
+    df.to_csv(pickupAP_ofpath, index=False)
 
 
 if __name__ == '__main__':
@@ -265,9 +231,3 @@ if __name__ == '__main__':
     #
     # pickupAP_dataProcess('09')
     pickupAP_dataProcess('10')
-
-    # dropoffAP_pickupAP_dataProcess('09')
-    # dropoffAP_pickupAP_dataProcess('10')
-
-    # dropoffAP_pickupX_dataProcess('09')
-    # dropoffAP_pickupX_dataProcess('10')

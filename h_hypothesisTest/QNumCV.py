@@ -15,8 +15,7 @@ def run_QNum_stdOmean():
         hours = sorted(list(set(m_hdf['hour'])))
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
-        ax.set_xlabel('hour')
-        # ax.set_ylabel('QNum SD / M')
+        ax.set_xlabel('Hour')
         for i, year in enumerate([2009, 2010]):
             plt.plot(range(len(hours)), [yearHour_QNumSD[year, hour] / float(yearHour_QNumM[year, hour]) for hour in hours],
                      color=clists[i], marker=mlists[i])
@@ -26,7 +25,7 @@ def run_QNum_stdOmean():
     df = pd.read_csv(opath.join(dpath['_data'], 'wholeAP-QNum-2009.csv'))
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'wholeAP-QNum-2010.csv')))
     #
-    img_ofpath = opath.join(dpath['hQNumSTDoM'], 'hQNumSTDoM.pdf')
+    img_ofpath = opath.join(dpath['hypQNumCV'], 'hypQNumCV.pdf')
     process_QNum_stdOmean(df, img_ofpath)
 
 

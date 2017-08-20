@@ -31,8 +31,9 @@ dpath['hourQNum'] = opath.join(dpath['hourTrend'], 'hourQNum')
 dpath['hourProductivity'] = opath.join(dpath['hourTrend'], 'hourProductivity')
 #
 dpath['hypothesisTest'] = opath.join(dpath['analysis'], 'hypothesisTest')
-dpath['hJoinQRatio'] = opath.join(dpath['hypothesisTest'], 'hJoinQRatio')
-dpath['hQNumSTDoM'] = opath.join(dpath['hypothesisTest'], 'hQNumSTDoM')
+dpath['hypQRatio'] = opath.join(dpath['hypothesisTest'], 'hypQRatio')
+dpath['hypQNumCV'] = opath.join(dpath['hypothesisTest'], 'hypQNumCV')
+dpath['hypQScore'] = opath.join(dpath['hypothesisTest'], 'hypQScore')
 
 
 
@@ -67,10 +68,8 @@ for dn in [
                 'hourNTrip', 'hourQTime', 'hourQRatio', 'hourQNum', 'hourProductivity',
             #
             'hypothesisTest',
-                'hJoinQRatio', 'hQNumSTDoM',
+                'hypQRatio', 'hypQNumCV', 'hypQScore',
 
-
-            # 'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest', 'dropoffAP_pickupX_tTest',
            ]:
     try:
         if not opath.exists(dpath[dn]):

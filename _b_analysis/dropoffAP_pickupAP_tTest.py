@@ -1,4 +1,4 @@
-import __init__
+import h_hypothesisTest
 from init_project import *
 #
 import sys

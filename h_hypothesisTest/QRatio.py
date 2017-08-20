@@ -42,7 +42,7 @@ WIDTH, HEIGHT = 600, 300
 
 
 def run():
-    csv_ofpath = opath.join(dpath['hJoinQRatio'], 'hJoinQRatio.csv')
+    csv_ofpath = opath.join(dpath['hypQRatio'], 'hypQRatio.csv')
     if not opath.exists(csv_ofpath):
         df = pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2009.csv'))
         df = df.append(pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2010.csv')))
@@ -56,7 +56,7 @@ def run():
     else:
         df = pd.read_csv(csv_ofpath)
     for year in [2009, 2010]:
-        html_ofpath = opath.join(dpath['hJoinQRatio'], 'hJoinQRatio%d.html' % year)
+        html_ofpath = opath.join(dpath['hypQRatio'], 'hypQRatio%d.html' % year)
         ydf = df[(df['year'] == year)]
         flow_str = ''
         for locPrevDropoff, locPickup, ratio in ydf[['locPrevDropoff', 'locPickup', 'ratio']].values:
@@ -66,7 +66,7 @@ def run():
             f.write(html_str)
             
         
-['%.2f' % (v * 100) for v in df[(df['year'] == 2010) & (df['locPrevDropoff'] == 'T1')]['ratio']]
+# ['%.2f' % (v * 100) for v in df[(df['year'] == 2010) & (df['locPrevDropoff'] == 'T1')]['ratio']]
         
         
 if __name__ == '__main__':
