@@ -19,19 +19,20 @@ dpath['analysis'] = opath.join(dpath['home'], 'analysis')
 dpath['_data'] = opath.join(dpath['analysis'], '_data')
 #
 dpath['monthTrend'] = opath.join(dpath['analysis'], 'monthTrend')
-dpath['monthNumTrips'] = opath.join(dpath['monthTrend'], 'monthNumTrips')
-dpath['monthAvgQTime'] = opath.join(dpath['monthTrend'], 'monthAvgQTime')
+dpath['monthNTrip'] = opath.join(dpath['monthTrend'], 'monthNTrip')
+dpath['monthQTime'] = opath.join(dpath['monthTrend'], 'monthQTime')
 dpath['monthQRatio'] = opath.join(dpath['monthTrend'], 'monthQRatio')
 #
 dpath['hourTrend'] = opath.join(dpath['analysis'], 'hourTrend')
-dpath['hourNumTrips'] = opath.join(dpath['hourTrend'], 'hourNumTrips')
+dpath['hourNTrip'] = opath.join(dpath['hourTrend'], 'hourNTrip')
 dpath['hourQTime'] = opath.join(dpath['hourTrend'], 'hourQTime')
 dpath['hourQRatio'] = opath.join(dpath['hourTrend'], 'hourQRatio')
 dpath['hourQNum'] = opath.join(dpath['hourTrend'], 'hourQNum')
 dpath['hourProductivity'] = opath.join(dpath['hourTrend'], 'hourProductivity')
 #
 dpath['hypothesisTest'] = opath.join(dpath['analysis'], 'hypothesisTest')
-dpath['hJoinQRatio'] = opath.join(dpath['analysis'], 'hJoinQRatio')
+dpath['hJoinQRatio'] = opath.join(dpath['hypothesisTest'], 'hJoinQRatio')
+dpath['hQNumSTDoM'] = opath.join(dpath['hypothesisTest'], 'hQNumSTDoM')
 
 
 
@@ -60,13 +61,13 @@ for dn in [
             'analysis', '_data',
             #
             'monthTrend',
-                'monthNumTrips', 'monthAvgQTime', 'monthQRatio',
+                'monthNTrip', 'monthQTime', 'monthQRatio',
             #
             'hourTrend',
-                'hourNumTrips', 'hourQTime', 'hourQRatio', 'hourQNum', 'hourProductivity',
+                'hourNTrip', 'hourQTime', 'hourQRatio', 'hourQNum', 'hourProductivity',
             #
             'hypothesisTest',
-                'hJoinQRatio',
+                'hJoinQRatio', 'hQNumSTDoM',
 
 
             # 'pickupAP_Regression', 'dropoffAP_tTest', 'dropoffAP_pickupAP_tTest', 'dropoffAP_pickupX_tTest',
@@ -181,5 +182,5 @@ mlists = (
     'D',  #    diamond
     '8',  #    octagon
     )
-figsize = (8, 6)
+FIGSIZE = (8, 6)
 terminal_order = ['T1', 'T2', 'T3', 'BudgetT']
