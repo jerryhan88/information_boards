@@ -22,7 +22,7 @@ def run_NTrip():
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
         ax.set_xlabel('Month')
-        ax.set_ylabel('SumNTrip')
+        # ax.set_ylabel('SumNTrip')
         for i, year in enumerate([2009, 2010]):
             plt.plot(range(len(bothYearMonth)), [yearMonth_NTrip[year, month] for month in bothYearMonth],
                      color=clists[i], marker=mlists[i])
@@ -66,7 +66,7 @@ def run_QTime():
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
         ax.set_xlabel('Month')
-        ax.set_ylabel('AvgQTime')
+        ax.set_ylabel('Minutes')
         for i, year in enumerate([2009, 2010]):
             plt.plot(range(len(bothYearMonth)), [yearMonth_NTrip[year, month] for month in bothYearMonth],
                      color=clists[i], marker=mlists[i])
@@ -121,5 +121,5 @@ def run_QRatio():
 
 if __name__ == '__main__':
     # run_NTrip()
-    # run_QTime()
-    run_QRatio()
+    run_QTime()
+    # run_QRatio()

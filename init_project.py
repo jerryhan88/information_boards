@@ -34,22 +34,7 @@ dpath['hypothesisTest'] = opath.join(dpath['analysis'], 'hypothesisTest')
 dpath['hypQRatio'] = opath.join(dpath['hypothesisTest'], 'hypQRatio')
 dpath['hypQNumCV'] = opath.join(dpath['hypothesisTest'], 'hypQNumCV')
 dpath['hypQScore'] = opath.join(dpath['hypothesisTest'], 'hypQScore')
-
-
-
-
-
-
-
-
-
-
-dpath['pickupAP_Regression'] = opath.join(dpath['analysis'], 'pickupAP_Regression')
-dpath['dropoffAP_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_tTest')
-dpath['dropoffAP_pickupAP_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_pickupAP_tTest')
-dpath['dropoffAP_pickupX_tTest'] = opath.join(dpath['analysis'], 'dropoffAP_pickupX_tTest')
-
-
+dpath['hypCorrNInfl'] = opath.join(dpath['hypothesisTest'], 'hypCorrNInfl')
 
 
 for dn in [
@@ -68,7 +53,7 @@ for dn in [
                 'hourNTrip', 'hourQTime', 'hourQRatio', 'hourQNum', 'hourProductivity',
             #
             'hypothesisTest',
-                'hypQRatio', 'hypQNumCV', 'hypQScore',
+                'hypQRatio', 'hypQNumCV', 'hypQScore', 'hypCorrNInfl',
 
            ]:
     try:

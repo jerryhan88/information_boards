@@ -6,7 +6,7 @@ import seaborn as sns; sns.set_style("whitegrid")
 import matplotlib.pyplot as plt
 
 
-def process_hourPlots(df, img_ofpath):
+def process_hourPlots(df, img_ofpath, ylimRange=None):
     hdf = df.groupby(['year', 'hour']).mean()['QScore'].to_frame('avgQScore').reset_index()
     hours = sorted(list(set(hdf['hour'])))
     yearHour_QTime = {}
@@ -20,9 +20,11 @@ def process_hourPlots(df, img_ofpath):
                  color=clists[i], marker=mlists[i])
     plt.legend(['2009', '2010'], ncol=1, loc='upper left')
     plt.xticks(range(len(hours)), hours)
+    plt.ylim(ylimRange)
     plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
 
-def process_monthPlots(df, img_ofpath):
+
+def process_monthPlots(df, img_ofpath, ylimRange=None):
     mdf = df.groupby(['year', 'month']).mean()['QScore'].to_frame('avgQScore').reset_index()
     month2009 = set(mdf[(mdf['year'] == 2009)]['month'])
     month2010 = set(mdf[(mdf['year'] == 2010)]['month'])
@@ -39,6 +41,7 @@ def process_monthPlots(df, img_ofpath):
                  color=clists[i], marker=mlists[i])
     plt.legend(['2009', '2010'], ncol=1, loc='upper left')
     plt.xticks(range(len(bothYearMonth)), bothYearMonth)
+    plt.ylim(ylimRange)
     plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
 
 
@@ -47,9 +50,9 @@ def run_pickupAP():
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2010.csv')))
     #
     img_ofpath = opath.join(dpath['hypQScore'], 'hypQScore-pickupAP-hour.pdf')
-    process_hourPlots(df, img_ofpath)
+    process_hourPlots(df, img_ofpath, (0, 3))
     img_ofpath = opath.join(dpath['hypQScore'], 'hypQScore-pickupAP-month.pdf')
-    process_monthPlots(df, img_ofpath)
+    process_monthPlots(df, img_ofpath, (0, 3))
 
 
 def run_dropoffAP():
@@ -57,11 +60,11 @@ def run_dropoffAP():
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2010.csv')))
 
     img_ofpath = opath.join(dpath['hypQScore'], 'hypQScore-dropoffAP-hour.pdf')
-    process_hourPlots(df, img_ofpath)
+    process_hourPlots(df, img_ofpath, (0, 1))
     img_ofpath = opath.join(dpath['hypQScore'], 'hypQScore-dropoffAP-month.pdf')
-    process_monthPlots(df, img_ofpath)
+    process_monthPlots(df, img_ofpath, (0, 1))
 
 
 if __name__ == '__main__':
-    # run_pickupAP()
-    run_dropoffAP()
+    run_pickupAP()
+    # run_dropoffAP()

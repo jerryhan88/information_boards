@@ -17,7 +17,7 @@ def run_NTrip():
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
         ax.set_xlabel('Hour')
-        ax.set_ylabel('avgNTrip')
+        # ax.set_ylabel('avgNTrip')
         for i, year in enumerate([2009, 2010]):
             plt.plot(range(len(hours)), [yearHour_NTrip[year, hour] for hour in hours],
                      color=clists[i], marker=mlists[i])
@@ -43,7 +43,7 @@ def run_NTrip():
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
         ax.set_xlabel('Hour')
-        ax.set_ylabel('AvgNTrip')
+        # ax.set_ylabel('AvgNTrip')
         for i, dow in enumerate(dows):
             plt.plot(range(len(hours)), [dowHour_NTrip[dow, hour] for hour in hours],
                      color=clists[i], marker=mlists[i])
@@ -98,8 +98,10 @@ def run_NTrip():
     hdf = pickupAP_df.groupby(['year', 'month', 'day', 'hour', 'terminal']).count()['did'].to_frame('NTrip').reset_index()
     figsize = (8, 6)
     fig = plt.figure(figsize=figsize)
-    fig.add_subplot(111)
+    ax = fig.add_subplot(111)
     sns.barplot(x="hour", y="NTrip", hue="terminal", hue_order=terminal_order, data=hdf)
+    ax.set_xlabel('Hour')
+    ax.set_ylabel('')
     plt.ylim((0, 300))
     # plt.yticks(np.arange(0, 100, 20))
     img_ofpath = opath.join(dpath['hourNTrip'], 'hourNTripWterminalPickup.pdf')
@@ -111,8 +113,10 @@ def run_QTime():
         _df['terminal'] = _df['locPickup']
         figsize = (8, 6)
         fig = plt.figure(figsize=figsize)
-        fig.add_subplot(111)
+        ax = fig.add_subplot(111)
         sns.barplot(x="hour", y="QTime", hue="terminal", hue_order=terminal_order, data=_df)
+        ax.set_xlabel('Hour')
+        ax.set_ylabel('Minutes')
         plt.ylim((0, 70))
         plt.yticks(np.arange(0, 70, 20))
         plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
@@ -126,7 +130,7 @@ def run_QTime():
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
         ax.set_xlabel('Hour')
-        ax.set_ylabel('avgQTime')
+        ax.set_ylabel('Minutes')
         for i, year in enumerate([2009, 2010]):
             plt.plot(range(len(hours)), [yearHour_QTime[year, hour] for hour in hours],
                      color=clists[i], marker=mlists[i])
@@ -148,7 +152,7 @@ def run_QTime():
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
         ax.set_xlabel('Hour')
-        ax.set_ylabel('AvgQTime')
+        ax.set_ylabel('Minutes')
         for i, dow in enumerate(dows):
             plt.plot(range(len(hours)), [dowHour_NTrip[dow, hour] for hour in hours],
                      color=clists[i], marker=mlists[i])
@@ -184,7 +188,10 @@ def run_QNum():
     def process_QNum_Wterminal(_df, img_ofpath):
         fig = plt.figure(figsize=FIGSIZE)
         fig.add_subplot(111)
+        ax = fig.add_subplot(111)
         sns.barplot(x="hour", y="QNum", hue="terminal", hue_order=terminal_order, data=_df)
+        ax.set_xlabel('Hour')
+        ax.set_ylabel('')
         plt.ylim((0, 100))
         plt.yticks(np.arange(0, 100, 20))
         plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
@@ -198,7 +205,7 @@ def run_QNum():
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
         ax.set_xlabel('Hour')
-        ax.set_ylabel('avgQNum')
+        # ax.set_ylabel('avgQNum')
         for i, year in enumerate([2009, 2010]):
             plt.plot(range(len(hours)), [yearHour_QNum[year, hour] for hour in hours],
                      color=clists[i], marker=mlists[i])
@@ -265,7 +272,7 @@ def run_productivity():
         fig = plt.figure(figsize=FIGSIZE)
         ax = fig.add_subplot(111)
         ax.set_xlabel('Hour')
-        ax.set_ylabel('avgProductivity')
+        ax.set_ylabel('S$ / Hour')
         for i in range(2):
             plt.plot(range(len(hours)), [jHour_productivity[i, hour] for hour in hours],
                      color=clists[i], marker=mlists[i])
@@ -287,9 +294,9 @@ def run_productivity():
 
 
 if __name__ == '__main__':
-    # run_NTrip()
+    run_NTrip()
     # run_QTime()
     # run_QNum()
     # run_productivity()
-    run_QRatio()
+    # run_QRatio()
 
