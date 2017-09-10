@@ -66,7 +66,7 @@ def process_daily(yymmdd):
                 startTime = eval(row[hid['startTime']])
                 if not vehicles.has_key(vid):
                     continue
-                enteringTime, exitingTime = vehicles[vid].find_eeTime(startTime, pickUpTerminal)
+                enteringTime, exitingTime = vehicles[vid].find_eeTime_AP(startTime, pickUpTerminal)
                 new_row = [row[hid[cn]] for cn in ['vid', 'did',
                                                    'startTime', 'endTime', 'duration', 'fare']]
                 new_row += [enteringTime, exitingTime]
