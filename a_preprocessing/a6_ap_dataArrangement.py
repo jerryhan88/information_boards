@@ -37,6 +37,7 @@ def basicProcess(yy):
     ofpath = opath.join(dpath['_data'], 'wholeAP-hourProductivity-20%s.csv' % yy)
     new_df.to_csv(ofpath, index=False)
 
+
 def wholeAP_QNum(yy):
     ifpath = opath.join(dpath['_data'], 'wholeAP-20%s.csv' % yy)
     ofpath = opath.join(dpath['_data'], 'wholeAP-QNum-20%s.csv' % yy)
