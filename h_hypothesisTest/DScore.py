@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 
 
 def process_hourPlots(df, img_ofpath, ylimRange=None):
-    hdf = df.groupby(['year', 'hour']).mean()['QScore'].to_frame('avgQScore').reset_index()
+    hdf = df.groupby(['year', 'hour']).mean()['DScore'].to_frame('avgDScore').reset_index()
     hours = sorted(list(set(hdf['hour'])))
     yearHour_QTime = {}
-    for year, hour, QScore in hdf.values:
-        yearHour_QTime[year, hour] = QScore
+    for year, hour, DScore in hdf.values:
+        yearHour_QTime[year, hour] = DScore
     fig = plt.figure(figsize=FIGSIZE)
     ax = fig.add_subplot(111)
     ax.set_xlabel('Hour')
@@ -25,7 +25,7 @@ def process_hourPlots(df, img_ofpath, ylimRange=None):
 
 
 def process_monthPlots(df, img_ofpath, ylimRange=None):
-    mdf = df.groupby(['year', 'month']).mean()['QScore'].to_frame('avgQScore').reset_index()
+    mdf = df.groupby(['year', 'month']).mean()['DScore'].to_frame('avgDScore').reset_index()
     month2009 = set(mdf[(mdf['year'] == 2009)]['month'])
     month2010 = set(mdf[(mdf['year'] == 2010)]['month'])
     bothYearMonth = sorted(list(month2009.intersection(month2010)))
@@ -49,9 +49,9 @@ def run_pickupAP():
     df = pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2009.csv'))
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2010.csv')))
     #
-    img_ofpath = opath.join(dpath['hypQScore'], 'hypQScore-pickupAP-hour.pdf')
+    img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-pickupAP-hour.pdf')
     process_hourPlots(df, img_ofpath, (0, 3))
-    img_ofpath = opath.join(dpath['hypQScore'], 'hypQScore-pickupAP-month.pdf')
+    img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-pickupAP-month.pdf')
     process_monthPlots(df, img_ofpath, (0, 3))
 
 
@@ -59,12 +59,23 @@ def run_dropoffAP():
     df = pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2009.csv'))
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2010.csv')))
 
-    img_ofpath = opath.join(dpath['hypQScore'], 'hypQScore-dropoffAP-hour.pdf')
-    process_hourPlots(df, img_ofpath, (0, 1))
-    img_ofpath = opath.join(dpath['hypQScore'], 'hypQScore-dropoffAP-month.pdf')
-    process_monthPlots(df, img_ofpath, (0, 1))
+    img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-dropoffAP-hour.pdf')
+    process_hourPlots(df, img_ofpath)
+    img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-dropoffAP-month.pdf')
+    process_monthPlots(df, img_ofpath)
+
+
+def run_dropoffXAP():
+    df = pd.read_csv(opath.join(dpath['_data'], 'dropoffXAP-2009.csv'))
+    df = df.append(pd.read_csv(opath.join(dpath['_data'], 'dropoffXAP-2010.csv')))
+
+    img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-dropoffXAP-hour.pdf')
+    process_hourPlots(df, img_ofpath)
+    img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-dropoffXAP-month.pdf')
+    process_monthPlots(df, img_ofpath)
 
 
 if __name__ == '__main__':
-    run_pickupAP()
+    # run_pickupAP()
     # run_dropoffAP()
+    run_dropoffXAP()

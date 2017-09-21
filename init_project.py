@@ -33,8 +33,9 @@ dpath['hourProductivity'] = opath.join(dpath['hourTrend'], 'hourProductivity')
 dpath['hypothesisTest'] = opath.join(dpath['analysis'], 'hypothesisTest')
 dpath['hypQRatio'] = opath.join(dpath['hypothesisTest'], 'hypQRatio')
 dpath['hypQNumCV'] = opath.join(dpath['hypothesisTest'], 'hypQNumCV')
-dpath['hypQScore'] = opath.join(dpath['hypothesisTest'], 'hypQScore')
+dpath['hypDScore'] = opath.join(dpath['hypothesisTest'], 'hypDScore')
 dpath['hypCorrNInfl'] = opath.join(dpath['hypothesisTest'], 'hypCorrNInfl')
+dpath['hypSCost'] = opath.join(dpath['hypothesisTest'], 'hypSCost')
 
 
 for dn in [
@@ -53,7 +54,7 @@ for dn in [
                 'hourNTrip', 'hourQTime', 'hourQRatio', 'hourQNum', 'hourProductivity',
             #
             'hypothesisTest',
-                'hypQRatio', 'hypQNumCV', 'hypQScore', 'hypCorrNInfl',
+                'hypQRatio', 'hypQNumCV', 'hypDScore', 'hypCorrNInfl', 'hypSCost',
 
            ]:
     try:

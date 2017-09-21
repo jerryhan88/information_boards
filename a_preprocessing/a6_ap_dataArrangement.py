@@ -250,7 +250,7 @@ def pickupAP_dataProcess(yy):
 
 if __name__ == '__main__':
     # basicProcess('09')
-    basicProcess('10')
+    # basicProcess('10')
     #
     # wholeAP_QNum('09')
     # wholeAP_QNum('10')
@@ -261,4 +261,4 @@ if __name__ == '__main__':
     # dropoff_dataProcess('10', isAP=False)
     #
     # pickupAP_dataProcess('09')
-    # pickupAP_dataProcess('10')
+    pickupAP_dataProcess('10')
