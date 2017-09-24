@@ -14,8 +14,8 @@ def run():
     csv_ofpath = opath.join(dpath['hypCorrNInfl'], 'driver2010-measures.csv')
     corr_img_ofpath = opath.join(dpath['hypCorrNInfl'], 'correlation.pdf')
     corr_csv_ofpath = opath.join(dpath['hypCorrNInfl'], 'correlation.csv')
-    pQ2dQ_ofpath = opath.join(dpath['hypCorrNInfl'], 'regression-pQ2dQ.txt')
-    dQ2pQ_ofpath = opath.join(dpath['hypCorrNInfl'], 'regression-dQ2pQ.txt')
+    # pQ2dQ_ofpath = opath.join(dpath['hypCorrNInfl'], 'regression-pQ2dQ.txt')
+    # dQ2pQ_ofpath = opath.join(dpath['hypCorrNInfl'], 'regression-dQ2pQ.txt')
     #
     if not opath.exists(csv_ofpath):
         pickupAP_df = pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2010.csv'))
@@ -51,19 +51,19 @@ def run():
     plt.savefig(corr_img_ofpath, bbox_inches='tight', pad_inches=0)
     df.corr().to_csv(corr_csv_ofpath)
     #
-    y = df['dQScore']
-    X = df[['pQScore']]
-    X = sm.add_constant(X)
-    res = sm.OLS(y, X, missing='drop').fit()
-    with open(pQ2dQ_ofpath, 'w') as f:
-        f.write(res.summary().as_text())
-    #
-    y = df['pQScore']
-    X = df[['dQScore']]
-    X = sm.add_constant(X)
-    res = sm.OLS(y, X, missing='drop').fit()
-    with open(dQ2pQ_ofpath, 'w') as f:
-        f.write(res.summary().as_text())
+    # y = df['dQScore']
+    # X = df[['pQScore']]
+    # X = sm.add_constant(X)
+    # res = sm.OLS(y, X, missing='drop').fit()
+    # with open(pQ2dQ_ofpath, 'w') as f:
+    #     f.write(res.summary().as_text())
+    # #
+    # y = df['pQScore']
+    # X = df[['dQScore']]
+    # X = sm.add_constant(X)
+    # res = sm.OLS(y, X, missing='drop').fit()
+    # with open(dQ2pQ_ofpath, 'w') as f:
+    #     f.write(res.summary().as_text())
     
     
 

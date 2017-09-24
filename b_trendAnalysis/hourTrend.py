@@ -294,9 +294,9 @@ def run_productivity():
 
 
 if __name__ == '__main__':
-    run_NTrip()
+    # run_NTrip()
     # run_QTime()
     # run_QNum()
     # run_productivity()
-    # run_QRatio()
+    run_QRatio()
 

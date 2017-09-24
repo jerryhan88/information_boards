@@ -121,5 +121,5 @@ def run_QRatio():
 
 if __name__ == '__main__':
     # run_NTrip()
-    run_QTime()
-    # run_QRatio()
+    # run_QTime()
+    run_QRatio()

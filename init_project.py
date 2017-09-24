@@ -31,11 +31,13 @@ dpath['hourQNum'] = opath.join(dpath['hourTrend'], 'hourQNum')
 dpath['hourProductivity'] = opath.join(dpath['hourTrend'], 'hourProductivity')
 #
 dpath['hypothesisTest'] = opath.join(dpath['analysis'], 'hypothesisTest')
-dpath['hypQRatio'] = opath.join(dpath['hypothesisTest'], 'hypQRatio')
+dpath['hypFRatio'] = opath.join(dpath['hypothesisTest'], 'hypFRatio')
 dpath['hypQNumCV'] = opath.join(dpath['hypothesisTest'], 'hypQNumCV')
-dpath['hypDScore'] = opath.join(dpath['hypothesisTest'], 'hypDScore')
-dpath['hypCorrNInfl'] = opath.join(dpath['hypothesisTest'], 'hypCorrNInfl')
 dpath['hypSCost'] = opath.join(dpath['hypothesisTest'], 'hypSCost')
+dpath['hypDScore'] = opath.join(dpath['hypothesisTest'], 'hypDScore')
+dpath['hypCorr'] = opath.join(dpath['hypothesisTest'], 'hypCorr')
+# dpath['hypCorrNInfl'] = opath.join(dpath['hypothesisTest'], 'hypCorrNInfl')
+
 
 
 for dn in [
@@ -54,8 +56,7 @@ for dn in [
                 'hourNTrip', 'hourQTime', 'hourQRatio', 'hourQNum', 'hourProductivity',
             #
             'hypothesisTest',
-                'hypQRatio', 'hypQNumCV', 'hypDScore', 'hypCorrNInfl', 'hypSCost',
-
+                'hypFRatio', 'hypQNumCV', 'hypSCost', 'hypDScore', 'hypCorr'
            ]:
     try:
         if not opath.exists(dpath[dn]):

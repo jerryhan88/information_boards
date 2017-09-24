@@ -60,9 +60,9 @@ def run_dropoffAP():
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'dropoffAP-2010.csv')))
 
     img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-dropoffAP-hour.pdf')
-    process_hourPlots(df, img_ofpath)
+    process_hourPlots(df, img_ofpath, (-4, 4))
     img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-dropoffAP-month.pdf')
-    process_monthPlots(df, img_ofpath)
+    process_monthPlots(df, img_ofpath, (0, 2))
 
 
 def run_dropoffXAP():
@@ -70,12 +70,12 @@ def run_dropoffXAP():
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'dropoffXAP-2010.csv')))
 
     img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-dropoffXAP-hour.pdf')
-    process_hourPlots(df, img_ofpath)
+    process_hourPlots(df, img_ofpath, (-4, 4))
     img_ofpath = opath.join(dpath['hypDScore'], 'hypDScore-dropoffXAP-month.pdf')
-    process_monthPlots(df, img_ofpath)
+    process_monthPlots(df, img_ofpath, (0, 2))
 
 
 if __name__ == '__main__':
     # run_pickupAP()
-    # run_dropoffAP()
-    run_dropoffXAP()
+    run_dropoffAP()
+    # run_dropoffXAP()
