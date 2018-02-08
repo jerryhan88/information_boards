@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import csv
 #
 path_join = lambda prefix, name : opath.join(prefix, name)
-DATA_HOME = reduce(path_join, [opath.expanduser('~'), 'Dropbox', 'Data', 'Flights'])
+DATA_HOME = reduce(path_join, [opath.expanduser('~'), 'Data', 'Flights'])
 INTERVAL = 3600 * 3
 
 
