@@ -23,9 +23,9 @@ def run():
                 fpath = opath.join(dpath, 'Flights-%s-%d%02d%02d.csv' % (moment, dt.year, dt.month, dt.day))
                 url = 'http://www.changiairport.com/en/flight/arrivals.html?term=&schtime=&date=%s&time=all' % moment
                 crawling(url, fpath)
-                time.sleep(INTERVAL)
         except:
             pass
+        time.sleep(INTERVAL)
 
 
 def crawling(url, fpath):
