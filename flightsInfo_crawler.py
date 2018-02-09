@@ -14,15 +14,18 @@ INTERVAL = 3600 * 3
 
 
 def run():
-    # while True:
-    today_dt = datetime.datetime.today()
-    yesterday_dt = today_dt - datetime.timedelta(days=1)
-    for moment, dt in [('today', today_dt), ('yesterday', yesterday_dt)]:
-        dpath = opath.join(DATA_HOME, moment)
-        fpath = opath.join(dpath, 'Flights-%s-%d%02d%02d.csv' % (moment, dt.year, dt.month, dt.day))
-        url = 'http://www.changiairport.com/en/flight/arrivals.html?term=&schtime=&date=%s&time=all' % moment
-        crawling(url, fpath)
-        # time.sleep(INTERVAL)
+    while True:
+        try:
+            today_dt = datetime.datetime.today()
+            yesterday_dt = today_dt - datetime.timedelta(days=1)
+            for moment, dt in [('today', today_dt), ('yesterday', yesterday_dt)]:
+                dpath = opath.join(DATA_HOME, moment)
+                fpath = opath.join(dpath, 'Flights-%s-%d%02d%02d.csv' % (moment, dt.year, dt.month, dt.day))
+                url = 'http://www.changiairport.com/en/flight/arrivals.html?term=&schtime=&date=%s&time=all' % moment
+                crawling(url, fpath)
+                time.sleep(INTERVAL)
+        except:
+            pass
 
 
 def crawling(url, fpath):
