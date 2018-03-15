@@ -154,6 +154,9 @@ def run_QTime():
         ax.set_xlabel('Hour')
         ax.set_ylabel('Minutes')
         for i, dow in enumerate(dows):
+            print(img_ofpath)
+            print(dow, [dowHour_NTrip[dow, hour] for hour in hours])
+            print()
             plt.plot(range(len(hours)), [dowHour_NTrip[dow, hour] for hour in hours],
                      color=clists[i], marker=mlists[i])
         plt.legend(['Mon', 'Tue', 'Wed', 'Thr', 'Fri', 'Sat', 'Sun'], ncol=1, loc='upper left')
@@ -164,24 +167,24 @@ def run_QTime():
     df = pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2009.csv'))
     df = df.append(pd.read_csv(opath.join(dpath['_data'], 'pickupAP-2010.csv')))
     #
-    img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow.pdf')
-    process_QTime_Wdow(df, img_ofpath)
-    img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWyear.pdf')
-    process_QTime_Wyear(df, img_ofpath)
-    img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWterminal.pdf')
-    process_QTime_Wterminal(df, img_ofpath)
-    #
-    for tn in ['T1', 'T2', 'T3', 'BudgetT']:
-        img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow-%s.pdf' % tn)
-        process_QTime_Wdow(df[(df['locPickup'] == tn)], img_ofpath)
-        img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWyear-%s.pdf' % tn)
-        process_QTime_Wyear(df[(df['locPickup'] == tn)], img_ofpath)
+    # img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow.pdf')
+    # process_QTime_Wdow(df, img_ofpath)
+    # img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWyear.pdf')
+    # process_QTime_Wyear(df, img_ofpath)
+    # img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWterminal.pdf')
+    # process_QTime_Wterminal(df, img_ofpath)
+    # #
+    # for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+    #     img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow-%s.pdf' % tn)
+    #     process_QTime_Wdow(df[(df['locPickup'] == tn)], img_ofpath)
+    #     img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWyear-%s.pdf' % tn)
+    #     process_QTime_Wyear(df[(df['locPickup'] == tn)], img_ofpath)
     for year in [2009, 2010]:
         img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow-%d.pdf' % year)
         process_QTime_Wdow(df[(df['locPickup'] != 'X') & (df['year'] == year)], img_ofpath)
-        for tn in ['T1', 'T2', 'T3', 'BudgetT']:
-            img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow-%d-%s.pdf' % (year, tn))
-            process_QTime_Wdow(df[(df['locPickup'] == tn) & (df['year'] == year)], img_ofpath)
+        # for tn in ['T1', 'T2', 'T3', 'BudgetT']:
+        #     img_ofpath = opath.join(dpath['hourQTime'], 'hourQTimeWdow-%d-%s.pdf' % (year, tn))
+        #     process_QTime_Wdow(df[(df['locPickup'] == tn) & (df['year'] == year)], img_ofpath)
 
 
 def run_QNum():
@@ -294,9 +297,9 @@ def run_productivity():
 
 
 if __name__ == '__main__':
-    # run_NTrip()
-    # run_QTime()
+    run_NTrip()
+    run_QTime()
     # run_QNum()
     # run_productivity()
-    run_QRatio()
+    # run_QRatio()
 

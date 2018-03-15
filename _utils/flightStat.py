@@ -13,8 +13,8 @@ for flight in data['flightStatuses']:
     hh, mm = map(int, [_hh, _mm])
     ss_sss = float(_ss)
     if hh == 6:
-        print ''
-        print flight
+        print('')
+        print(flight)
         # assert False
     hours.add(hh)
 
@@ -46,10 +46,10 @@ while True:
         if (cur_date.year, cur_date.month) == (2010, 10):
             continue
         ofpath = '%d%s.json' % (cur_date.year, ''.join('%02d' % x for x in [cur_date.month, cur_date.day, hour]))
-        print ofpath
+        print(ofpath)
         curl = "https://api.flightstats.com/flex/flightstatus/historical/rest/v3/json/airport/status/SIN/arr/%d/%d/%d/%d?appId=a42321e6&appKey=895a74e02c6c034bf4b642fa0339438a&utc=false&numHours=6" % (
         cur_date.year, cur_date.month, cur_date.day, hour)
-        print curl
+        print(curl)
         r = requests.get(curl)
         r.json()
         with open(ofpath, 'w') as f:

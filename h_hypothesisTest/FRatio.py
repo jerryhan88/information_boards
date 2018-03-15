@@ -110,6 +110,12 @@ def run_whole():
         ydf = df[(df['year'] == year)]
         flow_str = ''
         for locPrevDropoff, locPickup, ratio in ydf[['locPrevDropoff', 'locPickup', 'ratio']].values:
+            if locPrevDropoff == 'X': locPrevDropoff = 'XAP'
+            if locPickup == 'X': locPickup = 'XAP'
+
+            if locPrevDropoff == 'BudgetT': locPrevDropoff = 'TB'
+            if locPickup == 'BudgetT': locPickup = 'TB'
+
             flow_str += '\t\t\t\t\t\t\t\t\t%s\n' % "['F %s', 'T %s', %.3f]," % (locPrevDropoff, locPickup, ratio)
         html_str = html_template % ('locPrevDropoff', 'locPickup', 'ratio', flow_str, WIDTH, HEIGHT)
         with open(html_ofpath, 'w') as f:
