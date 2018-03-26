@@ -1,5 +1,4 @@
 import sys
-import os.path as opath
 from datetime import datetime
 import csv
 #
@@ -7,6 +6,8 @@ from ucp_geoFunctions import get_ap_polygons
 
 
 AVAILABLE, BUSY, HIRED, ON_CALL, CHANGE_SHIFT, OFFLINE = range(1, 7)
+
+handleWeek = True
 
 
 def run(ifpath, ofpath):
@@ -16,12 +17,19 @@ def run(ifpath, ofpath):
         writer.writerow(new_header)
     #
     ap_polygons = get_ap_polygons()
+    cur_day = -1
     with open(ifpath) as r_csvfile:
         reader = csv.DictReader(r_csvfile)
         for row in reader:
             vid, status = map(int, [row[cn] for cn in ['taxi_num_id', 'taxi_status']])
             lat, lon = map(float, [row[cn] for cn in ['latitude_val', 'longitude_val']])
             dt = datetime.strptime(row['min_time'], "%Y-%m-%d %H:%M:%S")
+            if cur_day != dt.day:
+                if handleWeek and dt.day == 8:
+                    print('Handled a week')
+                    return
+                cur_day = dt.day
+                print('Handling %d th day' % cur_day)
             new_row = [dt.timestamp(), vid, status]
             apBasePos = 'X'
             for ap_polygon in ap_polygons:

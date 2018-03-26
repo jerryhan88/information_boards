@@ -1,9 +1,6 @@
 import os.path as opath
 from functools import reduce
 from shapely.geometry import Polygon, Point
-import shapely
-print(dir(shapely))
-assert False
 
 geo_dpath = reduce(opath.join,
                [opath.dirname(opath.realpath(__file__)),
@@ -32,7 +29,9 @@ def extract_ap_polygons():
 def get_ap_polygons():
     ap_polygons = []
     with open(apPolygons_fpath, 'r') as f:
-        terName, _polyCoords = f.readline().rstrip('\n').split(':')
+        contents = f.readlines()
+    for l in contents:
+        terName, _polyCoords = l.rstrip('\n').split(':')
         ap_poly = poly(eval(_polyCoords))
         ap_poly.name = terName
         ap_polygons.append(ap_poly)
@@ -51,5 +50,18 @@ class poly(Polygon):
 
 
 if __name__ == '__main__':
-    extract_ap_polygons()
-    get_ap_polygons()
+    # extract_ap_polygons()
+    ap_polygons = get_ap_polygons()
+
+
+    end_lon = 103.98973687999998
+    end_lat = 1.3611000837999998
+
+    # end_lon, end_lat = 103.9888924, 1.362931656
+
+    apBasePos = 'X'
+    for ap_polygon in ap_polygons:
+        if ap_polygon.is_including((end_lon, end_lat)):
+            apBasePos = ap_polygon.name
+            break
+    print(apBasePos)
