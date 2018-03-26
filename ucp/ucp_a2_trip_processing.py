@@ -34,7 +34,7 @@ def run(ifpath, ofpath):
                     continue
                 end_dt = datetime.strptime(row['end_time'], "%Y-%m-%d %H:%M:%S")
                 trip_type = row['trip_type']
-                new_row = [vid, start_dt.timestamp(), end_dt.timestamp(), trip_type]
+                new_row = [vid, row['fare'], start_dt.timestamp(), end_dt.timestamp(), trip_type]
 
                 start_lat, start_lon = map(float,
                                            [row[cn] for cn in ['start_latitude', 'start_longitude']])

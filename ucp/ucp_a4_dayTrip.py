@@ -11,9 +11,13 @@ def run(trip_fpath, trip_dir, log_dir):
     handling_day = 0
     vid_lastLocTime, vehicles = {}, {}
     dayLogs = {}
+    cur_vid = ''
     with open(trip_fpath) as r_csvfileTrip:
         tirpReader = csv.DictReader(r_csvfileTrip)
         for rowT in tirpReader:
+            if cur_vid != rowT['vid']:
+                cur_vid = rowT['vid']
+                print('handling vid:', cur_vid, datetime.now())
             tPickUp = eval(rowT['tPickUp'])
             pu_dt = datetime.fromtimestamp(tPickUp)
             day, hour = pu_dt.day, pu_dt.hour
@@ -134,7 +138,7 @@ class vehicle(object):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 4:
         trip_fpath, trip_dir, log_dir = sys.argv[1], sys.argv[2], sys.argv[3]
     else:
         trip_fpath = 'trip_out.csv'

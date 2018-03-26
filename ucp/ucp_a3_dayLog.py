@@ -20,6 +20,7 @@ def run(ifpath, of_dir):
             if AM2 <= dt.hour and dt.hour <= AM5:
                 continue
             if dt.day != handling_day and dt.hour == AM5 + 1:
+                print('handling %dth day' % dt.day, datetime.now())
                 handling_day, vid_lastLoc = dt.day, {}
                 ofpath = opath.join(of_dir,
                                     'dayLog-%d%02d%02d.csv' % ((dt.year - 2000), dt.month, handling_day))
@@ -43,9 +44,9 @@ def run(ifpath, of_dir):
 
 if __name__ == '__main__':
     if len(sys.argv) == 3:
-        ifpath, ofpath = sys.argv[1], sys.argv[2]
+        ifpath, of_dir = sys.argv[1], sys.argv[2]
     else:
         ifpath = 'log_out.csv'
-        ofpath = os.getcwd()
+        of_dir = os.getcwd()
 
-    run(ifpath, ofpath)
+    run(ifpath, of_dir)
