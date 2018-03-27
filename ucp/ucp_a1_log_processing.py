@@ -7,10 +7,10 @@ from ucp_geoFunctions import get_ap_polygons
 
 AVAILABLE, BUSY, HIRED, ON_CALL, CHANGE_SHIFT, OFFLINE = range(1, 7)
 
-handleWeek = True
 
+# [8, 13], [14, 20], [21, 27], [28, 30]
 
-def run(ifpath, ofpath):
+def run(ifpath, ofpath, sDay, eDay):
     with open(ofpath, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile, lineterminator='\n')
         new_header = ['time', 'vid', 'state', 'apBasePos']
@@ -25,11 +25,13 @@ def run(ifpath, ofpath):
             lat, lon = map(float, [row[cn] for cn in ['latitude_val', 'longitude_val']])
             dt = datetime.strptime(row['min_time'], "%Y-%m-%d %H:%M:%S")
             if cur_day != dt.day:
-                if handleWeek and dt.day == 8:
-                    print('Handled a week')
+                if int(eDay) < dt.day:
+                    print('Finish processes')
                     return
                 cur_day = dt.day
                 print('Handling %d th day' % cur_day)
+                if dt.day < int(sDay):
+                    continue
             new_row = [dt.timestamp(), vid, status]
             apBasePos = 'X'
             for ap_polygon in ap_polygons:
@@ -44,10 +46,11 @@ def run(ifpath, ofpath):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3:
-        ifpath, ofpath = sys.argv[1], sys.argv[2]
+    if len(sys.argv) == 5:
+        ifpath, ofpath, sDay, eDay = [sys.argv[i] for i in range(1, len(sys.argv))]
     else:
         ifpath = 'log_sample.csv'
         ofpath = 'log_out.csv'
+        sDay, eDay = 1, 1
 
-    run(ifpath, ofpath)
+    run(ifpath, ofpath, sDay, eDay)
