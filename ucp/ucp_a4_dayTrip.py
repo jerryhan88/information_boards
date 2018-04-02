@@ -7,73 +7,75 @@ import csv
 AM2, AM5 = 2, 5
 
 
-def run(trip_fpath, trip_dir, log_dir):
+def run(trip_dir, log_dir):
     handling_day = 0
     vid_lastLocTime, vehicles = {}, {}
     dayLogs = {}
     cur_vid = ''
-    with open(trip_fpath) as r_csvfileTrip:
-        tirpReader = csv.DictReader(r_csvfileTrip)
-        for rowT in tirpReader:
-            if cur_vid != rowT['vid']:
-                cur_vid = rowT['vid']
-                print('handling vid:', cur_vid, datetime.now())
-            tPickUp = eval(rowT['tPickUp'])
-            pu_dt = datetime.fromtimestamp(tPickUp)
-            day, hour = pu_dt.day, pu_dt.hour
-            if day == 1 and hour <= AM5:
-                continue
-            if AM2 <= hour and hour <= AM5:
-                continue
-            if day != handling_day and hour == AM5 + 1:
-                handling_day = day
-                if (day, hour) not in dayLogs:
-                    vid_lastLocTime, vehicles = {}, {}
-                    log_fpath = opath.join(log_dir,
-                               'dayLog-%d%02d%02d.csv' % ((pu_dt.year - 2000), pu_dt.month, handling_day))
-                    with open(log_fpath) as r_csvfileLog:
-                        logReader = csv.DictReader(r_csvfileLog)
-                        for rowL in logReader:
-                            vid = rowL['vid']
-                            if vid not in vehicles:
-                                vehicles[vid] = vehicle(vid)
-                            vehicles[vid].add_trajectory(eval(rowL['time']), rowL['apBasePos'])
-                    dayLogs[day, hour] = [vid_lastLocTime, vehicles]
-                else:
-                    vid_lastLocTime, vehicles = dayLogs[day, hour]
-                #
-                ofpath = opath.join(trip_dir,
-                        'dayTrip-%d%02d%02d.csv' % ((pu_dt.year - 2000), pu_dt.month, handling_day))
-                if not opath.exists(ofpath):
-                    with open(ofpath, 'wt') as w_csvfile:
-                        writer = csv.writer(w_csvfile, lineterminator='\n')
-                        new_headers = [
-                            'year', 'month', 'day', 'dow', 'hour',
-                            'fare',
-                            'locPrevDropoff', 'locPickup', 'locDropoff',
-                            'tPrevDropoff', 'tEnter', 'tExit',
-                            'tripType',
-                                'tPickUp', 'tDropOff']
-                        writer.writerow(new_headers)
-            vid = rowT['vid']
-            if vid not in vehicles:
-                continue
-            locPickup, locDropoff = [rowT[cn] for cn in ['apBaseStartPos', 'apBaseEndPos']]
-            tPickUp, tDropOff = map(eval, [rowT[cn] for cn in ['tPickUp', 'tDropOff']])
-            if vid not in vid_lastLocTime:
-                vid_lastLocTime[vid] = (locDropoff, tDropOff)
-                continue
-            locPrevDropoff, tPrevDropoff = vid_lastLocTime[vid]
-            if not (locPrevDropoff == 'X' and locPickup == 'X'):
-                tEnter, tExit = vehicles[vid].find_eeTime_AP(tPickUp, locPickup)
-                others = [locPrevDropoff, locPickup, locDropoff, tPrevDropoff, tEnter, tExit]
-                add_row(ofpath, rowT, pu_dt, others)
-            else:
-                visitAP, tEnter, tExit = vehicles[vid].find_eeTime_XAP(tPrevDropoff, tPickUp)
-                others = [locPrevDropoff, locPickup, locDropoff, tPrevDropoff, tEnter, tExit]
-                if visitAP:
+    for fn in sorted([fn for fn in os.listdir(trip_dir) if fn.startswith('trips-')]):
+        trip_fpath = opath.join(trip_dir, fn)
+        with open(trip_fpath) as r_csvfileTrip:
+            tirpReader = csv.DictReader(r_csvfileTrip)
+            for rowT in tirpReader:
+                if cur_vid != rowT['vid']:
+                    cur_vid = rowT['vid']
+                    print('handling vid:', cur_vid, datetime.now())
+                tPickUp = eval(rowT['tPickUp'])
+                pu_dt = datetime.fromtimestamp(tPickUp)
+                day, hour = pu_dt.day, pu_dt.hour
+                if day == 1 and hour <= AM5:
+                    continue
+                if AM2 <= hour and hour <= AM5:
+                    continue
+                if day != handling_day and hour == AM5 + 1:
+                    handling_day = day
+                    if (day, hour) not in dayLogs:
+                        vid_lastLocTime, vehicles = {}, {}
+                        log_fpath = opath.join(log_dir,
+                                   'dayLog-%d%02d%02d.csv' % ((pu_dt.year - 2000), pu_dt.month, handling_day))
+                        with open(log_fpath) as r_csvfileLog:
+                            logReader = csv.DictReader(r_csvfileLog)
+                            for rowL in logReader:
+                                vid = rowL['vid']
+                                if vid not in vehicles:
+                                    vehicles[vid] = vehicle(vid)
+                                vehicles[vid].add_trajectory(eval(rowL['time']), rowL['apBasePos'])
+                        dayLogs[day, hour] = [vid_lastLocTime, vehicles]
+                    else:
+                        vid_lastLocTime, vehicles = dayLogs[day, hour]
+                    #
+                    ofpath = opath.join(trip_dir,
+                            'dayTrip-%d%02d%02d.csv' % ((pu_dt.year - 2000), pu_dt.month, handling_day))
+                    if not opath.exists(ofpath):
+                        with open(ofpath, 'wt') as w_csvfile:
+                            writer = csv.writer(w_csvfile, lineterminator='\n')
+                            new_headers = [
+                                'year', 'month', 'day', 'dow', 'hour',
+                                'fare',
+                                'locPrevDropoff', 'locPickup', 'locDropoff',
+                                'tPrevDropoff', 'tEnter', 'tExit',
+                                'tripType',
+                                    'tPickUp', 'tDropOff']
+                            writer.writerow(new_headers)
+                vid = rowT['vid']
+                if vid not in vehicles:
+                    continue
+                locPickup, locDropoff = [rowT[cn] for cn in ['apBaseStartPos', 'apBaseEndPos']]
+                tPickUp, tDropOff = map(eval, [rowT[cn] for cn in ['tPickUp', 'tDropOff']])
+                if vid not in vid_lastLocTime:
+                    vid_lastLocTime[vid] = (locDropoff, tDropOff)
+                    continue
+                locPrevDropoff, tPrevDropoff = vid_lastLocTime[vid]
+                if not (locPrevDropoff == 'X' and locPickup == 'X'):
+                    tEnter, tExit = vehicles[vid].find_eeTime_AP(tPickUp, locPickup)
+                    others = [locPrevDropoff, locPickup, locDropoff, tPrevDropoff, tEnter, tExit]
                     add_row(ofpath, rowT, pu_dt, others)
-            vid_lastLocTime[vid] = (locDropoff, tDropOff)
+                else:
+                    visitAP, tEnter, tExit = vehicles[vid].find_eeTime_XAP(tPrevDropoff, tPickUp)
+                    others = [locPrevDropoff, locPickup, locDropoff, tPrevDropoff, tEnter, tExit]
+                    if visitAP:
+                        add_row(ofpath, rowT, pu_dt, others)
+                vid_lastLocTime[vid] = (locDropoff, tDropOff)
 
 
 def add_row(ofpath, row, pu_dt, others):
@@ -138,11 +140,10 @@ class vehicle(object):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 4:
-        trip_fpath, trip_dir, log_dir = sys.argv[1], sys.argv[2], sys.argv[3]
+    if len(sys.argv) == 3:
+        trip_dir, log_dir = sys.argv[1], sys.argv[2]
     else:
-        trip_fpath = 'trip_out.csv'
         trip_dir = os.getcwd()
         log_dir = os.getcwd()
 
-    run(trip_fpath, trip_dir, log_dir)
+    run(trip_dir, log_dir)

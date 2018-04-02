@@ -4,11 +4,8 @@ import csv
 #
 from ucp_geoFunctions import get_ap_polygons
 
-
 AVAILABLE, BUSY, HIRED, ON_CALL, CHANGE_SHIFT, OFFLINE = range(1, 7)
 
-
-# [8, 13], [14, 20], [21, 27], [28, 30]
 
 def run(ifpath, ofpath, sDay, eDay):
     with open(ofpath, 'wt') as w_csvfile:
@@ -25,13 +22,13 @@ def run(ifpath, ofpath, sDay, eDay):
             lat, lon = map(float, [row[cn] for cn in ['latitude_val', 'longitude_val']])
             dt = datetime.strptime(row['min_time'], "%Y-%m-%d %H:%M:%S")
             if cur_day != dt.day:
-                if int(eDay) < dt.day:
+                cur_day = dt.day
+                print('Handling %d th day' % cur_day, datetime.now())
+                if int(eDay) < cur_day:
                     print('Finish processes')
                     return
-                cur_day = dt.day
-                print('Handling %d th day' % cur_day)
-                if dt.day < int(sDay):
-                    continue
+            if dt.day < int(sDay):
+                continue
             new_row = [dt.timestamp(), vid, status]
             apBasePos = 'X'
             for ap_polygon in ap_polygons:

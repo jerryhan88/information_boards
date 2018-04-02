@@ -4,10 +4,9 @@ import csv
 #
 from ucp_geoFunctions import get_ap_polygons
 #
-handleWeek = True
 
 
-def run(ifpath, ofpath):
+def run(ifpath, ofpath, sDay, eDay):
     with open(ofpath, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile, lineterminator='\n')
         new_header = [
@@ -30,7 +29,9 @@ def run(ifpath, ofpath):
                 if cur_vid != vid:
                     cur_vid = vid
                     print('handling vid:', vid, datetime.now())
-                if handleWeek and start_dt.day >= 8:
+                if start_dt.day < int(sDay):
+                    continue
+                if int(eDay) < start_dt.day:
                     continue
                 end_dt = datetime.strptime(row['end_time'], "%Y-%m-%d %H:%M:%S")
                 trip_type = row['trip_type']
@@ -63,10 +64,11 @@ def run(ifpath, ofpath):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3:
-        ifpath, ofpath = sys.argv[1], sys.argv[2]
+    if len(sys.argv) == 5:
+        ifpath, ofpath, sDay, eDay = [sys.argv[i] for i in range(1, len(sys.argv))]
     else:
         ifpath = 'trip_sample.csv'
         ofpath = 'trip_out.csv'
+        sDay, eDay = 1, 1
 
-    run(ifpath, ofpath)
+    run(ifpath, ofpath, sDay, eDay)
