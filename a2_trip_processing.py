@@ -14,7 +14,6 @@ MIN20 = 20 * 60
 
 def run(yymm):
     logging_fpath = opath.join(lf_dpath, 'a2_%s.txt' % yymm)
-    reduce(opath.join, [])
     ofpath = opath.join(trip_dpath, 'trip-%s.csv' % yymm)
     #
     logging(logging_fpath, 'handle the file; %s' % yymm)
