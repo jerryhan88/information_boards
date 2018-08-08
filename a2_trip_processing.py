@@ -3,7 +3,7 @@ import csv
 from functools import reduce
 from traceback import format_exc
 #
-from util_geoFunctions import get_ap_polygons, poly
+from util_geoFunctions import get_ap_polygons
 from util_logging import logging
 #
 from __path_organizer import TAXI_RAW_DATA_HOME, lf_dpath, trip_dpath

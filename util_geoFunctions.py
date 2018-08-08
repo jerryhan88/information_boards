@@ -7,15 +7,15 @@ from __path_organizer import geo_dpath
 
 
 def get_ap_polygons():
-    fpath = opath.join(geo_dpath, 'terminalPoly.pkl')
+    fpath = opath.join(geo_dpath, 'terminalCoords.pkl')
     if not opath.exists(fpath):
         from pykml import parser
+        terminal_coords = {}
         poly_names = ['T1', 'T2', 'T3', 'BudgetT']
         ifpath = opath.join(geo_dpath, 'queues.kml')
         with open(ifpath) as f:
             kml_doc = parser.parse(f).getroot().Document
         assert kml_doc is not None
-        ap_polygons = []
         for pm in kml_doc.Placemark:
             if pm.name in poly_names:
                 str_coords = str(pm.Polygon.outerBoundaryIs.LinearRing.coordinates)
@@ -23,14 +23,17 @@ def get_ap_polygons():
                 for l in ''.join(str_coords.split()).split(',0')[:-1]:
                     _long, _lat = l.split(',')
                     points.append([eval(_long), eval(_lat)])
-                ap_poly = poly(points)
-                ap_poly.name = pm.name if pm.name != 'BudgetT' else 'B'
-                ap_polygons.append(ap_poly)
+                terminal_coords[pm.name if pm.name != 'BudgetT' else 'B'] = points
         with open(fpath, 'wb') as fp:
-            pickle.dump(ap_polygons, fp)
+            pickle.dump(terminal_coords, fp)
     else:
         with open(fpath, 'rb') as fp:
-            ap_polygons = pickle.load(fp)
+            terminal_coords = pickle.load(fp)
+    ap_polygons = []
+    for tn, points in terminal_coords.items():
+        ap_poly = poly(points)
+        ap_poly.name = tn
+        ap_polygons.append(ap_poly)
     return ap_polygons
 
 
