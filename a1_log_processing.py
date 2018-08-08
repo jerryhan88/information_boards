@@ -27,11 +27,11 @@ def run(yymm):
         reader = csv.DictReader(r_csvfile)
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
-            new_headers = ['time', 'vid', 'did', 'state', 'apBasePos']
+            new_headers = ['time', 'taxi_id', 'driver_id', 'state', 'apBasePos']
             writer.writerow(new_headers)
             #
             for row in reader:
-                new_row = [row[cn] for cn in ['time', 'taxi_id', 'driver_id', 'state']]
+                new_row = [row[cn] for cn in ['time', 'vehicle-id', 'driver-id', 'state']]
                 #
                 lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
                 apBasePos = 'X'
