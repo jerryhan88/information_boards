@@ -1,18 +1,15 @@
 import os.path as opath
 import pickle
-from pykml import parser
 from shapely.geometry import Polygon, Point
 #
 from __path_organizer import geo_dpath
 #
 
-#
-
-
 
 def get_ap_polygons():
     fpath = opath.join(geo_dpath, 'terminalPoly.pkl')
     if not opath.exists(fpath):
+        from pykml import parser
         poly_names = ['T1', 'T2', 'T3', 'BudgetT']
         ifpath = opath.join(geo_dpath, 'queues.kml')
         with open(ifpath) as f:
