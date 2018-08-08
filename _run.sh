@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-
-python3 -c "from a2_trip_processing import run; run('1001')" &
+python3 -c "from a1_log_processing import run; run('1001')" &
+#python3 -c "from a2_trip_processing import run; run('1001')" &
 
 
 

@@ -12,12 +12,13 @@ lf_dpath = opath.join(data_dpath, '_logging')
 #
 pf_dpath = opath.join(data_dpath, 'ProcessedFiles')
 trip_dpath = opath.join(pf_dpath, 'trip')
+log_dpath = opath.join(pf_dpath, 'log')
 
 
 dir_paths = [data_dpath, geo_dpath,
              lf_dpath,
              pf_dpath,
-                trip_dpath]
+                trip_dpath, log_dpath]
 
 
 for dpath in dir_paths:
