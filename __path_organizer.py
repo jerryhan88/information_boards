@@ -67,8 +67,6 @@ dpath['hypDScore'] = opath.join(dpath['hypothesisTest'], 'hypDScore')
 dpath['hypCorr'] = opath.join(dpath['hypothesisTest'], 'hypCorr')
 # dpath['hypCorrNInfl'] = opath.join(dpath['hypothesisTest'], 'hypCorrNInfl')
 
-dpath['logging'] = opath.join(dpath['home'], 'logging')
-
 for dn in [
             'home',
             #
@@ -86,9 +84,6 @@ for dn in [
             #
             'hypothesisTest',
                 'hypFRatio', 'hypQNumCV', 'hypSCost', 'hypDScore', 'hypCorr'
-    
-            #
-            'logging'
            ]:
     try:
         if not opath.exists(dpath[dn]):
