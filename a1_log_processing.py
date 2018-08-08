@@ -23,19 +23,17 @@ def run(yymm):
                                     yyyy, mm, 'logs', 'logs-%s-normal.csv' % yymm])
     ap_polygons = get_ap_polygons()
     #
-    with open(log_fpath, 'rb') as r_csvfile:
-        reader = csv.reader(r_csvfile)
-        headers = reader.next()
-        hid = {h: i for i, h in enumerate(headers)}
+    with open(log_fpath) as r_csvfile:
+        reader = csv.DictReader(r_csvfile)
         with open(ofpath, 'wt') as w_csvfile:
             writer = csv.writer(w_csvfile, lineterminator='\n')
             new_headers = ['time', 'vid', 'did', 'state', 'apBasePos']
             writer.writerow(new_headers)
             #
             for row in reader:
-                new_row = [row[hid[cn]] for cn in ['time', 'taxi_id', 'driver_id', 'state']]
+                new_row = [row[cn] for cn in ['time', 'taxi_id', 'driver_id', 'state']]
                 #
-                lng, lat = map(eval, [row[hid[cn]] for cn in ['longitude', 'latitude']])
+                lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
                 apBasePos = 'X'
                 for ap_polygon in ap_polygons:
                     if ap_polygon.is_including((lng, lat)):
