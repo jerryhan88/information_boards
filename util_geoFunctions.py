@@ -1,27 +1,39 @@
-from __path_organizer import *
-#
-#
+import os.path as opath
+import pickle
 from pykml import parser
 from shapely.geometry import Polygon, Point
+#
+from __path_organizer import geo_dpath
+#
+
+#
+
 
 
 def get_ap_polygons():
-    poly_names = ['T1', 'T2', 'T3', 'BudgetT']
-    kml_doc = None
-    ifpath = opath.join(dpath['geo'], 'queues.kml')
-    with open(ifpath) as f:
-        kml_doc = parser.parse(f).getroot().Document
-    ap_polygons = []
-    for pm in kml_doc.Placemark:
-        if pm.name in poly_names:
-            str_coords = str(pm.Polygon.outerBoundaryIs.LinearRing.coordinates)
-            points = []
-            for l in ''.join(str_coords.split()).split(',0')[:-1]:
-                _long, _lat = l.split(',')
-                points.append([eval(_long), eval(_lat)])
-            ap_poly = poly(points)
-            ap_poly.name = pm.name if pm.name != 'BudgetT' else 'B'
-            ap_polygons.append(ap_poly)
+    fpath = opath.join(geo_dpath, 'terminalPoly.pkl')
+    if not opath.exists(fpath):
+        poly_names = ['T1', 'T2', 'T3', 'BudgetT']
+        ifpath = opath.join(geo_dpath, 'queues.kml')
+        with open(ifpath) as f:
+            kml_doc = parser.parse(f).getroot().Document
+        assert kml_doc is not None
+        ap_polygons = []
+        for pm in kml_doc.Placemark:
+            if pm.name in poly_names:
+                str_coords = str(pm.Polygon.outerBoundaryIs.LinearRing.coordinates)
+                points = []
+                for l in ''.join(str_coords.split()).split(',0')[:-1]:
+                    _long, _lat = l.split(',')
+                    points.append([eval(_long), eval(_lat)])
+                ap_poly = poly(points)
+                ap_poly.name = pm.name if pm.name != 'BudgetT' else 'B'
+                ap_polygons.append(ap_poly)
+        with open(fpath, 'wb') as fp:
+            pickle.dump(ap_polygons, fp)
+    else:
+        with open(fpath, 'rb') as fp:
+            ap_polygons = pickle.load(fp)
     return ap_polygons
 
 
@@ -52,4 +64,4 @@ class poly(Polygon):
 
 
 if __name__ == '__main__':
-    pass
+    get_ap_polygons()
