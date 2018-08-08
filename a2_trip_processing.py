@@ -30,8 +30,7 @@ def run(yymm):
             'start_latitude', 'start_longitude', 'start_time',
             'end_latitude', 'end_longitude', 'end_time',
             'start_loc', 'end_loc',
-            'time_previous_dropoff', 'time_enter_airport', 'time_first_free',
-            'loc_previous_dropoff', 'latitude_previous_dropoff', 'longitude_previous_dropoff',
+            'time_first_free',
         ]
         writer.writerow(new_header)
     #
