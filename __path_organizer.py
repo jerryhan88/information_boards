@@ -1,8 +1,37 @@
 import os.path as opath
 import os
+from functools import reduce
+
+
+TAXI_RAW_DATA_HOME = reduce(opath.join, [opath.expanduser("~"), '..', 'taxi'])
+
+
+data_dpath = reduce(opath.join, ['..', '_data', 'information_boards'])
+geo_dpath = opath.join(data_dpath, 'GeoFiles')
+lf_dpath = opath.join(data_dpath, '_logging')
+#
+pf_dpath = opath.join(data_dpath, 'ProcessedFiles')
+trip_dpath = opath.join(pf_dpath, 'trip')
+
+
+dir_paths = [data_dpath, geo_dpath,
+             lf_dpath,
+             pf_dpath,
+                trip_dpath]
+
+
+for dpath in dir_paths:
+    if opath.exists(dpath):
+        continue
+    os.mkdir(dpath)
+
+
+
 
 dpath = {}
-taxi_data_home = opath.join(opath.join(opath.dirname(opath.realpath(__file__)), '..'), 'taxi_data')
+taxi_data_home = reduce(opath.join, [opath.dirname(opath.realpath(__file__)),
+                                     '..',
+                                     'taxi_data'])
 dpath['raw'] = opath.join(taxi_data_home, 'raw')
 dpath['geo'] = opath.join(taxi_data_home, 'geo')
 # --------------------------------------------------------------
@@ -38,7 +67,7 @@ dpath['hypDScore'] = opath.join(dpath['hypothesisTest'], 'hypDScore')
 dpath['hypCorr'] = opath.join(dpath['hypothesisTest'], 'hypCorr')
 # dpath['hypCorrNInfl'] = opath.join(dpath['hypothesisTest'], 'hypCorrNInfl')
 
-
+dpath['logging'] = opath.join(dpath['home'], 'logging')
 
 for dn in [
             'home',
@@ -57,6 +86,9 @@ for dn in [
             #
             'hypothesisTest',
                 'hypFRatio', 'hypQNumCV', 'hypSCost', 'hypDScore', 'hypCorr'
+    
+            #
+            'logging'
            ]:
     try:
         if not opath.exists(dpath[dn]):

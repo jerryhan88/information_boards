@@ -1,5 +1,5 @@
 import __init__
-from init_project import *
+from __path_organizer import *
 #
 import seaborn as sns; sns.set_style("whitegrid")
 import pandas as pd

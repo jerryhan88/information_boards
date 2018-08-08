@@ -1,5 +1,5 @@
 import __init__
-from init_project import *
+from __path_organizer import *
 #
 from datetime import datetime
 import csv

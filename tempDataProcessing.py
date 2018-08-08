@@ -1,4 +1,4 @@
-from init_project import *
+from __path_organizer import *
 
 import pandas as pd
 

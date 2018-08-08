@@ -1,8 +1,7 @@
-import __init__
-from init_project import *
+from __path_organizer import *
 #
-from _utils.logger import get_logger
-from _utils.geoFunctions import get_ap_polygons, get_ns_polygon
+from util_logging import get_logger
+from util_geoFunctions import get_ap_polygons, get_ns_polygon
 #
 from os.path import expanduser
 import csv
@@ -19,7 +18,7 @@ def run(yymm):
     logger.info('handle the file; %s' % yymm)
     yy, mm = yymm[:2], yymm[2:]
     yyyy = '20%s' % yy
-    log_fpath = opath.join(TAXI_HOME, '%s/%s/logs/logs-%s-normal.csv' % (yyyy, mm, yymm))
+    log_fpath = opath.join(TAXI_RAW_DATA_HOME, '%s/%s/logs/logs-%s-normal.csv' % (yyyy, mm, yymm))
     ap_polygons, ns_polygon = get_ap_polygons(), get_ns_polygon()
     #
     with open(log_fpath, 'rb') as r_csvfile:

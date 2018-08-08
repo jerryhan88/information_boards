@@ -1,12 +1,8 @@
-import __init__
-from init_project import *
+from __path_organizer import *
 #
-from logger import get_logger
 #
 from pykml import parser
 from shapely.geometry import Polygon, Point
-
-logger = get_logger()
 
 
 def get_ap_polygons():
@@ -24,7 +20,7 @@ def get_ap_polygons():
                 _long, _lat = l.split(',')
                 points.append([eval(_long), eval(_lat)])
             ap_poly = poly(points)
-            ap_poly.name = pm.name
+            ap_poly.name = pm.name if pm.name != 'BudgetT' else 'B'
             ap_polygons.append(ap_poly)
     return ap_polygons
 
