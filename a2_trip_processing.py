@@ -64,14 +64,14 @@ def run(yymm):
                             rowL = next(logReader)
                             logTime = eval(rowL['time'])
                             vidL, state = map(int, [rowL[cn] for cn in ['vehicle-id', 'state']])
-                            if not vehicles.has_key(vidL):
+                            if not vidL in vehicles:
                                 vehicles[vidL] = vehicle(vidL, logTime, state)
                             else:
                                 vehicles[vidL].update(logTime, state)
                             if tripTime <= logTime:
                                 break
                         taxiID = int(rowN['vehicle-id'])
-                        if not vehicles.has_key(taxiID):
+                        if not taxiID in vehicles:
                             continue
                         driverID = int(rowE['driver-id'])
                         startTime, endTime = map(eval, [rowN[cn] for cn in ['start-time', 'end-time']])
