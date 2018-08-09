@@ -18,9 +18,11 @@ apDL_dpath = opath.join(log_dpath, 'ap_dayLog')
 
 dir_paths = [data_dpath, geo_dpath,
              lf_dpath,
-                apDL_dpath,
              pf_dpath,
-                trip_dpath, log_dpath]
+                trip_dpath,
+             log_dpath,
+                apDL_dpath,
+             ]
 
 
 for dpath in dir_paths:

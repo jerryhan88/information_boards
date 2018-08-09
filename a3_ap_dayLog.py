@@ -2,13 +2,13 @@ import os.path as opath
 import csv
 from datetime import datetime
 #
-from __path_organizer import lf_dpath, apDL_dpath
+from __path_organizer import log_dpath, apDL_dpath
 
 AM2, AM5 = 2, 5
 
 
 def run(yymm):
-    ifpath = opath.join(lf_dpath, 'log-%s.csv' % yymm)
+    ifpath = opath.join(log_dpath, 'log-%s.csv' % yymm)
     #
     ofpath = None
     handling_day, vid_lastLoc = 0, {}
