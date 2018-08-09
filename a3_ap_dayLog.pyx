@@ -1,20 +1,21 @@
-import __init__
-from __path_organizer import *
-#
-from datetime import datetime
+import os.path as opath
 import csv
+from datetime import datetime
+#
+from __path_organizer import lf_dpath, apDL_dpath
+
+AM2, AM5 = 2, 5
 
 
 def run(yymm):
-    ifpath = opath.join(dpath['log'], 'log-%s.csv' % yymm)
+    ifpath = opath.join(lf_dpath, 'log-%s.csv' % yymm)
+    #
     ofpath = None
     handling_day, vid_lastLoc = 0, {}
-    with open(ifpath, 'rb') as r_csvfile:
-        reader = csv.reader(r_csvfile)
-        headers = reader.next()
-        hid = {h: i for i, h in enumerate(headers)}
+    with open(ifpath) as r_csvfile:
+        reader = csv.DictReader(r_csvfile)
         for row in reader:
-            t = eval(row[hid['time']])
+            t = eval(row['time'])
             dt = datetime.fromtimestamp(t)
             if dt.day == 1 and dt.hour <= AM5:
                 continue
@@ -22,16 +23,16 @@ def run(yymm):
                 continue
             if dt.day != handling_day and dt.hour == AM5 + 1:
                 handling_day, vid_lastLoc = dt.day, {}
-                ofpath = opath.join(dpath['ap_dayLog'], 'ap-dayLog-%s%02d.csv' % (yymm, handling_day))
+                ofpath = opath.join(apDL_dpath, 'ap-dayLog-%s%02d.csv' % (yymm, handling_day))
                 with open(ofpath, 'wt') as w_csvfile:
                     writer = csv.writer(w_csvfile, lineterminator='\n')
-                    new_headers = ['time', 'vid', 'did', 'apBasePos']
-                    writer.writerow(new_headers)
-            vid, did = map(int, [row[hid[cn]] for cn in ['vid', 'did']])
-            apBasedPos = row[hid['apBasePos']]
+                    new_header = ['time', 'taxi_id', 'driver_id', 'apBasePos']
+                    writer.writerow(new_header)
+            vid, did = map(int, [row[cn] for cn in ['taxi_id', 'driver_id']])
+            apBasedPos = row['apBasePos']
             if did == -1:
                 continue
-            if vid_lastLoc.has_key(vid):
+            if vid in vid_lastLoc:
                 if vid_lastLoc[vid] != apBasedPos:
                     with open(ofpath, 'a') as w_csvfile:
                         writer = csv.writer(w_csvfile, lineterminator='\n')

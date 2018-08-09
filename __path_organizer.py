@@ -13,10 +13,12 @@ lf_dpath = opath.join(data_dpath, '_logging')
 pf_dpath = opath.join(data_dpath, 'ProcessedFiles')
 trip_dpath = opath.join(pf_dpath, 'trip')
 log_dpath = opath.join(pf_dpath, 'log')
+apDL_dpath = opath.join(log_dpath, 'ap_dayLog')
 
 
 dir_paths = [data_dpath, geo_dpath,
              lf_dpath,
+                apDL_dpath,
              pf_dpath,
                 trip_dpath, log_dpath]
 
@@ -93,7 +95,7 @@ for dn in [
         pass
 
 
-AM2, AM5 = 2, 5
+
 
 # For meaningless data filtering
 error_hours = [('9', '3', '15', '1'), ('10', '3', '17', '1'), ('10', '7', '4', '6'), ('10', '7', '4', '7'), ('10', '7', '4', '8'),
