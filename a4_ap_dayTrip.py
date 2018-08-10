@@ -21,7 +21,7 @@ def run(yymm):
         with open(trip_fpath) as tripFile:
             tripReader = csv.DictReader(tripFile)
             for row in tripReader:
-                did = int(row['did'])
+                did = int(row['driver_id'])
                 if did == -1:
                     continue
                 day, hour = map(int, [row[cn] for cn in ['day', 'hour']])
@@ -37,7 +37,7 @@ def run(yymm):
                     with open(log_fpath) as logFile:
                         logReader = csv.DictReader(logFile)
                         for rowL in logReader:
-                            vid = int(rowL['vid'])
+                            vid = int(rowL['driver_id'])
                             if not vid in vehicles:
                                 vehicles[vid] = vehicle(vid)
                             vehicles[vid].add_trajectory(eval(rowL['time']), rowL['apBasePos'])
