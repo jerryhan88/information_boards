@@ -3,8 +3,11 @@
 #python3 -c "from a1_log_processing import run; run('0911')" &
 #python3 -c "from a2_trip_processing import run; run('1001')" &
 
-python3 -c "from a3_ap_dayLog import run; run('0911')" &
-python3 -c "from a3_ap_dayLog import run; run('1001')" &
+#python3 -c "from a3_ap_dayLog import run; run('0911')" &
+#python3 -c "from a3_ap_dayLog import run; run('1001')" &
+
+python3 -c "from a4_ap_dayTrip import run; run('0911')" &
+python3 -c "from a4_ap_dayTrip import run; run('1001')" &
 
 
 #for i in 090{1..9} 09{10..11}; do
