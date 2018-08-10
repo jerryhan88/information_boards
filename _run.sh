@@ -11,8 +11,8 @@
 
 
 
-python3 -c "from _util_cython import gen_cFile; gen_cFile('a1_log_processing')"
-python3 -c "from _util_cython import gen_cFile; gen_cFile('a2_trip_processing')"
+python3 -c "from util_cython import gen_cFile; gen_cFile('a1_log_processing')"
+python3 -c "from util_cython import gen_cFile; gen_cFile('a2_trip_processing')"
 
 #for i in 090{1..9} 0910; do
 #    python3 -c "from a1_log_processing import run; run('$i')" &
