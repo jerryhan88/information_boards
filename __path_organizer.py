@@ -14,14 +14,14 @@ pf_dpath = opath.join(data_dpath, 'ProcessedFiles')
 trip_dpath = opath.join(pf_dpath, 'trip')
 log_dpath = opath.join(pf_dpath, 'log')
 apDL_dpath = opath.join(log_dpath, 'ap_dayLog')
+apDT_dpath = opath.join(trip_dpath, 'ap_dayTrip')
 
 
 dir_paths = [data_dpath, geo_dpath,
              lf_dpath,
              pf_dpath,
-                trip_dpath,
-             log_dpath,
-                apDL_dpath,
+                trip_dpath, apDL_dpath,
+                log_dpath, apDL_dpath,
              ]
 
 
