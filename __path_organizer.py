@@ -20,7 +20,7 @@ apDT_dpath = opath.join(trip_dpath, 'ap_dayTrip')
 dir_paths = [data_dpath, geo_dpath,
              lf_dpath,
              pf_dpath,
-                trip_dpath, apDL_dpath,
+                trip_dpath, apDT_dpath,
                 log_dpath, apDL_dpath,
              ]
 
