@@ -76,7 +76,7 @@ def run(yymm):
                         newInfo = [tPrevDropoff, tEnter, tExit,
                                    latPrevDropoff, lngPrevDropoff, locPrevDropoff]
                         add_row(ofpath, row, newInfo)
-                vid_lastLocTime[vid] = (eLoc, eTime)
+                vid_lastLocTime[vid] = (eLat, eLng, eLoc, eTime)
     except Exception as _:
         logging(logging_fpath, format_exc())
         raise
