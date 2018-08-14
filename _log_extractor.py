@@ -1,7 +1,7 @@
 import os.path as opath
 import csv
 from functools import reduce
-from datetime import datetime
+from datetime import datetime, timedelta
 #
 from util_geoFunctions import get_ap_polygons
 from util_logging import logging
@@ -22,6 +22,7 @@ def run(yymmdd, hh=None, taxi_id=None):
         new_header = ['time', 'taxi_id', 'driver_id', 'state', 'lng', 'lat', 'apBasePos']
         writer.writerow(new_header)
     #
+    target_dt = datetime.strptime(yymmdd + hh, '%y%m%d%H')
     yymm = yymmdd[:len('yymm')]
     yy, mm = yymm[:len('yy')], yymm[len('yy'):]
     dd = yymmdd[len('yymm'):]
@@ -36,12 +37,12 @@ def run(yymmdd, hh=None, taxi_id=None):
             t, vid, did, state = map(eval, [row[cn] for cn in ['time', 'vehicle-id', 'driver-id', 'state']])
             if vid != taxi_id:
                 continue
-            dt = datetime.fromtimestamp(t)
-            if '%02d' % dt.day != dd:
+            cur_dt = datetime.fromtimestamp(t)
+            if cur_dt.day != target_dt.day:
                 continue
-            if '%02d' % dt.hour != hh:
+            if cur_dt.hour != target_dt.hour:
                 continue
-            if dt.hour != int(hh) + 1:
+            if cur_dt.hour == target_dt.hour + timedelta(hours=1):
                 return None
             #
             lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
