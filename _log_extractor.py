@@ -10,7 +10,7 @@ from __path_organizer import TAXI_RAW_DATA_HOME, test_dpath, lf_dpath
 
 
 
-def run(yymmdd, hh=None, taxi_id=None):
+def extract_from_raw(yymmdd, hh=None, taxi_id=None):
     if type(taxi_id) != int:
         taxi_id = int(taxi_id)
     #
@@ -60,4 +60,5 @@ def run(yymmdd, hh=None, taxi_id=None):
 
 
 if __name__ == '__main__':
-    run('091101', hh='05', taxi_id=8557)
+    extract_from_raw('091101', hh='05', taxi_id=8557)
+
