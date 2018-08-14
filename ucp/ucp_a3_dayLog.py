@@ -26,9 +26,9 @@ def run(log_dir):
                                         'dayLog-%d%02d%02d.csv' % ((dt.year - 2000), dt.month, handling_day))
                     with open(ofpath, 'wt') as w_csvfile:
                         writer = csv.writer(w_csvfile, lineterminator='\n')
-                        new_headers = ['time', 'vid', 'apBasePos']
+                        new_headers = ['time', 'taxi_id', 'apBasePos']
                         writer.writerow(new_headers)
-                vid, apBasedPos = [row[cn] for cn in ['vid', 'apBasePos']]
+                vid, apBasedPos = [row[cn] for cn in ['taxi_id', 'apBasePos']]
                 if vid in vid_lastLoc:
                     if vid_lastLoc[vid] != apBasedPos:
                         with open(ofpath, 'a') as w_csvfile:

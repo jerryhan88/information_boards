@@ -10,7 +10,7 @@ AVAILABLE, BUSY, HIRED, ON_CALL, CHANGE_SHIFT, OFFLINE = range(1, 7)
 def run(ifpath, ofpath, sDay, eDay):
     with open(ofpath, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile, lineterminator='\n')
-        new_header = ['time', 'vid', 'state', 'apBasePos']
+        new_header = ['time', 'taxi_id', 'state', 'apBasePos']
         writer.writerow(new_header)
     #
     ap_polygons = get_ap_polygons()

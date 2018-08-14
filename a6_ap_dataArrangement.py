@@ -1,10 +1,22 @@
 import os.path as opath
+import os
 import pandas as pd
 import csv
-
-
-# from __path_organizer import *
 #
+from __path_organizer import apDT_dpath
+
+
+target_yymm = '1001'
+
+df = None
+for fn in os.listdir(apDT_dpath):
+    if not target_yymm in fn:
+        continue
+    df = pd.read_csv(opath.join(apDT_dpath, fn)) \
+                            if df is None \
+                            else df.append(pd.read_csv(opath.join(apDT_dpath, fn)))
+df = df.sort_values(by=['start_time'])
+df.to_csv('%s.csv' % target_yymm, index=False)
 
 
 
@@ -252,6 +264,8 @@ import csv
 
 
 if __name__ == '__main__':
+    pass
+
 
 
 

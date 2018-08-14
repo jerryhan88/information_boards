@@ -17,8 +17,8 @@ def run(trip_dir, log_dir):
         with open(trip_fpath) as r_csvfileTrip:
             tirpReader = csv.DictReader(r_csvfileTrip)
             for rowT in tirpReader:
-                if cur_vid != rowT['vid']:
-                    cur_vid = rowT['vid']
+                if cur_vid != rowT['taxi_id']:
+                    cur_vid = rowT['taxi_id']
                     print('handling vid:', cur_vid, datetime.now())
                 tPickUp = eval(rowT['tPickUp'])
                 pu_dt = datetime.fromtimestamp(tPickUp)
@@ -36,7 +36,7 @@ def run(trip_dir, log_dir):
                         with open(log_fpath) as r_csvfileLog:
                             logReader = csv.DictReader(r_csvfileLog)
                             for rowL in logReader:
-                                vid = rowL['vid']
+                                vid = rowL['taxi_id']
                                 if vid not in vehicles:
                                     vehicles[vid] = vehicle(vid)
                                 vehicles[vid].add_trajectory(eval(rowL['time']), rowL['apBasePos'])
@@ -52,12 +52,12 @@ def run(trip_dir, log_dir):
                             new_headers = [
                                 'year', 'month', 'day', 'dow', 'hour',
                                 'fare',
-                                'locPrevDropoff', 'locPickup', 'locDropoff',
-                                'tPrevDropoff', 'tEnter', 'tExit',
+                                'previous_dropoff_loc', 'start_loc', 'end_loc',
+                                'time_previous_dropoff', 'time_enter_airport', 'time_exit_airport',
                                 'tripType',
-                                    'tPickUp', 'tDropOff']
+                                    'start_time', 'end_time']
                             writer.writerow(new_headers)
-                vid = rowT['vid']
+                vid = rowT['taxi_id']
                 if vid not in vehicles:
                     continue
                 locPickup, locDropoff = [rowT[cn] for cn in ['apBaseStartPos', 'apBaseEndPos']]

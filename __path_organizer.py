@@ -9,19 +9,33 @@ TAXI_RAW_DATA_HOME = reduce(opath.join, [opath.expanduser("~"), '..', 'taxi'])
 data_dpath = reduce(opath.join, ['..', '_data', 'information_boards'])
 geo_dpath = opath.join(data_dpath, 'GeoFiles')
 lf_dpath = opath.join(data_dpath, '_logging')
-#
+ef_dpath = opath.join(data_dpath, 'ExternalFiles')
 pf_dpath = opath.join(data_dpath, 'ProcessedFiles')
+
+test_dpath = opath.join(data_dpath, 'Test')
+
+#
 trip_dpath = opath.join(pf_dpath, 'trip')
 log_dpath = opath.join(pf_dpath, 'log')
+flight_dpath = opath.join(pf_dpath, 'flight')
 apDL_dpath = opath.join(log_dpath, 'ap_dayLog')
 apDT_dpath = opath.join(trip_dpath, 'ap_dayTrip')
+apDNT_dpath = opath.join(trip_dpath, 'ap_dayNumTaxis')
+apDF_dpath = opath.join(flight_dpath, 'ap_dayFlight')
+apDNF_dpath = opath.join(flight_dpath, 'ap_dayNumFlights')
+
+
 
 
 dir_paths = [data_dpath, geo_dpath,
-             lf_dpath,
-             pf_dpath,
-                trip_dpath, apDT_dpath,
-                log_dpath, apDL_dpath,
+             lf_dpath, ef_dpath, pf_dpath,
+             trip_dpath, apDT_dpath, apDNT_dpath,
+             log_dpath, apDL_dpath,
+             flight_dpath, apDF_dpath, apDNF_dpath,
+
+
+            test_dpath
+
              ]
 
 

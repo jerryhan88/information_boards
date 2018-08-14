@@ -10,10 +10,10 @@ def run(ifpath, ofpath, sDay, eDay):
     with open(ofpath, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile, lineterminator='\n')
         new_header = [
-                        'vid', 'fare',
-                        'tPickUp', 'tDropOff',
+                        'taxi_id', 'fare',
+                        'start_time', 'end_time',
                         'tripType',
-                        'apBaseStartPos', 'apBaseEndPos'
+                        'start_loc', 'end_loc'
                      ]
         writer.writerow(new_header)
     #
