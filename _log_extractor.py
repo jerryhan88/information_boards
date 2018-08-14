@@ -19,7 +19,7 @@ def run(yymmdd, hh=None, taxi_id=None):
     logging(logging_fpath, 'handle the file; %s' % ofpath)
     with open(ofpath, 'w') as w_csvfile:
         writer = csv.writer(w_csvfile, lineterminator='\n')
-        new_header = ['time', 'taxi_id', 'driver_id', 'state', 'apBasePos']
+        new_header = ['time', 'taxi_id', 'driver_id', 'state', 'lng', 'lat', 'apBasePos']
         writer.writerow(new_header)
     #
     yymm = yymmdd[:len('yymm')]
@@ -41,6 +41,8 @@ def run(yymmdd, hh=None, taxi_id=None):
                 continue
             if '%02d' % dt.hour != hh:
                 continue
+            if dt.hour != int(hh) + 1:
+                return None
             #
             lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
             new_row = [t, vid, did, state, lng, lat]
