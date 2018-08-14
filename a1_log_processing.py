@@ -1,5 +1,6 @@
 import os.path as opath
 import csv
+from datetime import datetime, timedelta
 from functools import reduce
 
 #
@@ -11,6 +12,7 @@ from __path_organizer import TAXI_RAW_DATA_HOME, lf_dpath, log_dpath
 
 def run(yymm):
     logging_fpath = opath.join(lf_dpath, 'a1_%s.txt' % yymm)
+    target_dt = datetime.strptime(yymm, '%y%m')
 
     #
     logging(logging_fpath, 'handle the file; %s' % yymm)

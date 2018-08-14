@@ -23,9 +23,9 @@ def run(yymmdd, hh=None, taxi_id=None):
         writer.writerow(new_header)
     #
     target_dt = datetime.strptime(yymmdd + hh, '%y%m%d%H')
+    next_dt = target_dt + timedelta(hours=1)
     yymm = yymmdd[:len('yymm')]
     yy, mm = yymm[:len('yy')], yymm[len('yy'):]
-    dd = yymmdd[len('yymm'):]
     yyyy = '20%s' % yy
     #
     log_fpath = reduce(opath.join, [TAXI_RAW_DATA_HOME,
@@ -42,7 +42,7 @@ def run(yymmdd, hh=None, taxi_id=None):
                 continue
             if cur_dt.hour != target_dt.hour:
                 continue
-            if cur_dt.hour == target_dt.hour + timedelta(hours=1):
+            if cur_dt.hour == next_dt.hour:
                 return None
             #
             lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
