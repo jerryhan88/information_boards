@@ -40,11 +40,11 @@ def run(yymmdd, hh=None, taxi_id=None):
             cur_dt = datetime.fromtimestamp(t)
             if cur_dt.day != target_dt.day:
                 continue
-            if cur_dt.hour != target_dt.hour:
-                continue
             if cur_dt.hour == next_dt.hour:
                 logging(logging_fpath, 'next period; %s' % ofpath)
                 break
+            elif cur_dt.hour != target_dt.hour:
+                continue
             #
             lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
             new_row = [t, vid, did, state, lng, lat]
