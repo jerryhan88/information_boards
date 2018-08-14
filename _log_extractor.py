@@ -33,7 +33,7 @@ def run(yymmdd, hh=None, taxi_id=None):
     with open(log_fpath) as r_csvfile:
         reader = csv.DictReader(r_csvfile)
         for row in reader:
-            t, vid, did, state = map(eval, [row[cn] for cn in ['time', 'taxi_id', 'driver_id', 'state']])
+            t, vid, did, state = map(eval, [row[cn] for cn in ['time', 'vehicle-id', 'driver-id', 'state']])
             if vid != taxi_id:
                 continue
             dt = datetime.fromtimestamp(t)
