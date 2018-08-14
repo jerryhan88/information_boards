@@ -43,7 +43,8 @@ def run(yymmdd, hh=None, taxi_id=None):
             if cur_dt.hour != target_dt.hour:
                 continue
             if cur_dt.hour == next_dt.hour:
-                return None
+                logging(logging_fpath, 'next period; %s' % ofpath)
+                break
             #
             lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
             new_row = [t, vid, did, state, lng, lat]
