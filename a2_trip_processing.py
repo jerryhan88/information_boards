@@ -39,7 +39,7 @@ def run(yymm):
                 cur_dt = datetime.fromtimestamp(startTime)
                 if cur_dt.day != handling_day:
                     handling_day = cur_dt.day
-                    logging(logging_fpath, 'handle day %d' % sDay)
+                    logging(logging_fpath, 'handle day %d' % handling_day)
                     handling_hour = -1
                 if cur_dt.day == handling_day and cur_dt.hour != handling_hour:
                     handling_hour = cur_dt.hour
