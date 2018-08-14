@@ -10,51 +10,55 @@ from util_logging import logging
 #
 from __path_organizer import TAXI_RAW_DATA_HOME, lf_dpath, log_dpath
 
-NUM_WORKER = 6
+NUM_WORKER = 2
 
 
 def process_dates(wid, dts, logging_fpath):
     logging(logging_fpath, 'Start worker %d' % wid)
-    for ymd_dt in dts:
-        logging(logging_fpath, 'Worker %d: handling %s' % (wid, str(ymd_dt)))
-        yy, mm = ymd_dt.strftime('%y'), ymd_dt.strftime('%m')
-        yyyy = ymd_dt.strftime('%Y')
-        #
-        log_fpath = reduce(opath.join, [TAXI_RAW_DATA_HOME,
-                                        yyyy, mm, 'logs', 'logs-%s-normal.csv' % ymd_dt.strftime('%y%m')])
-        ap_polygons = get_ap_polygons()
-        next_dt = ymd_dt + timedelta(days=1)
-        handling_hour = -1
-        with open(log_fpath) as r_csvfile:
-            reader = csv.DictReader(r_csvfile)
-            for row in reader:
-                t, vid, did, state = map(eval, [row[cn] for cn in ['time', 'vehicle-id', 'driver-id', 'state']])
-                cur_dt = datetime.fromtimestamp(t)
-                if cur_dt.day == next_dt.day:
-                    logging(logging_fpath, 'Worker %d: end %s' % (wid, str(ymd_dt)))
-                    break
-                elif cur_dt.day != ymd_dt.day:
-                    continue
-                #
-                if cur_dt.hour != handling_hour:
-                    ofpath = opath.join(log_dpath, 'log-%s.csv' % cur_dt.strftime('%Y%m%d%H'))
-                    with open(ofpath, 'w') as w_csvfile:
-                        writer = csv.writer(w_csvfile, lineterminator='\n')
-                        new_header = ['time', 'taxi_id', 'driver_id', 'state', 'lng', 'lat', 'apBasePos']
-                        writer.writerow(new_header)
-                    handling_hour = cur_dt.hour
-                #
-                lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
-                new_row = [t, vid, did, state, lng, lat]
-                apBasePos = 'X'
-                for ap_polygon in ap_polygons:
-                    if ap_polygon.is_including((lng, lat)):
-                        apBasePos = ap_polygon.name
-                        break
-                new_row.append(apBasePos)
-                with open(ofpath, 'a') as w_csvfile:
+    target_days = list(range(dts[0].day, dts[-1].day + 1))
+    ymd_dt = dts[0]
+    logging(logging_fpath, 'Worker %d: handling %s' % (wid, str(ymd_dt)))
+    yy, mm = ymd_dt.strftime('%y'), ymd_dt.strftime('%m')
+    yyyy = ymd_dt.strftime('%Y')
+    #
+    log_fpath = reduce(opath.join, [TAXI_RAW_DATA_HOME,
+                                    yyyy, mm, 'logs', 'logs-%s-normal.csv' % ymd_dt.strftime('%y%m')])
+    ap_polygons = get_ap_polygons()
+    handling_day, handling_hour = -1, -1
+    with open(log_fpath) as r_csvfile:
+        reader = csv.DictReader(r_csvfile)
+        for row in reader:
+            t, vid, did, state = map(eval, [row[cn] for cn in ['time', 'vehicle-id', 'driver-id', 'state']])
+            cur_dt = datetime.fromtimestamp(t)
+            if cur_dt.day != handling_day:
+                handling_day = cur_dt.day
+                logging(logging_fpath, 'Worker %d: handling %dth day' % (wid, cur_dt.day))
+                handling_hour = -1
+            if cur_dt.day < target_days[0]:
+                continue
+            if cur_dt.day > target_days[-1]:
+                logging(logging_fpath, 'Worker %d: end processing' % wid)
+                break
+            #
+            if cur_dt.hour != handling_hour:
+                handling_hour = cur_dt.hour
+                ofpath = opath.join(log_dpath, 'log-%s.csv' % cur_dt.strftime('%Y%m%d%H'))
+                with open(ofpath, 'w') as w_csvfile:
                     writer = csv.writer(w_csvfile, lineterminator='\n')
-                    writer.writerow(new_row)
+                    new_header = ['time', 'taxi_id', 'driver_id', 'state', 'lng', 'lat', 'apBasePos']
+                    writer.writerow(new_header)
+            #
+            lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
+            new_row = [t, vid, did, state, lng, lat]
+            apBasePos = 'X'
+            for ap_polygon in ap_polygons:
+                if ap_polygon.is_including((lng, lat)):
+                    apBasePos = ap_polygon.name
+                    break
+            new_row.append(apBasePos)
+            with open(ofpath, 'a') as w_csvfile:
+                writer = csv.writer(w_csvfile, lineterminator='\n')
+                writer.writerow(new_row)
 
 
 def run(yymm):
@@ -69,7 +73,7 @@ def run(yymm):
     handling_date = first_date
     worker_dts = [[] for _ in range(NUM_WORKER)]
     while handling_date < nm_first_day:
-        worker_dts[handling_date.day % NUM_WORKER].append(handling_date)
+        worker_dts[int((handling_date.day - 1) / numDays * NUM_WORKER)].append(handling_date)
         handling_date += timedelta(days=1)
     #
     ps = []
