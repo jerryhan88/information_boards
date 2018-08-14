@@ -42,6 +42,7 @@ def process_dates(wid, dts, logging_fpath):
                         writer = csv.writer(w_csvfile, lineterminator='\n')
                         new_header = ['time', 'taxi_id', 'driver_id', 'state', 'lng', 'lat', 'apBasePos']
                         writer.writerow(new_header)
+                    handling_hour = cur_dt.hour
                 #
                 lng, lat = map(eval, [row[cn] for cn in ['longitude', 'latitude']])
                 new_row = [t, vid, did, state, lng, lat]
