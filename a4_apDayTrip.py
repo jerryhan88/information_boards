@@ -42,7 +42,7 @@ def get_target_dates(prefix=None):
                 continue
             target_date.append(dt0.date())
     #
-    return target_date
+    return sorted(target_date)
 
 
 def process_files(wid, fns, wsDict):
