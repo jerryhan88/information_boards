@@ -1,145 +1,117 @@
 import os.path as opath
-from bisect import bisect
+import multiprocessing
+import os
+from datetime import datetime, timedelta
 import csv
-from traceback import format_exc
 #
 from util_logging import logging
 #
-from __path_organizer import lf_dpath, trip_dpath, apDL_dpath, apDT_dpath
+from __path_organizer import lf_dpath, trip_dpath, dt_dpath
 
-AM2, AM5 = 2, 5
+AM2, AM6 = 2, 6
+TARGET_HOURS = list(range(AM6, 24))
+TARGET_HOURS += list(range(AM2))
+NUM_WORKER = 2
 
 
-def run(yymm):
-    logging_fpath = opath.join(lf_dpath, 'a4_%s.txt' % yymm)
+def get_target_dates(prefix=None):
+    _target_days = set()
+    for fn in os.listdir(trip_dpath):
+        if not fn.endswith('.csv'):
+            continue
+        if prefix and not (prefix in fn):
+            continue
+        _, yyyymmddhh = fn[:-len('.csv')].split('-')
+        dt = datetime.strptime(yyyymmddhh, '%Y%m%d%H')
+        _target_days.add(dt.strftime('%Y%m%d'))
+    target_date = []
+    for yyyymmdd in _target_days:
+        dt0 = datetime.strptime(yyyymmdd, '%Y%m%d')
+        is_valid = True
+        for h in TARGET_HOURS:
+            if h in [0, 1]:
+                next_dt = dt0 + timedelta(days=1)
+                dt1 = datetime(next_dt.year, next_dt.month, next_dt.day, h)
+            else:
+                dt1 = datetime(dt0.year, dt0.month, dt0.day, h)
+            fpath = opath.join(trip_dpath, 'trip-%s.csv' % dt1.strftime('%Y%m%d%H'))
+            if not opath.exists(fpath):
+                is_valid = False
+                break
+        if is_valid:
+            fpath = opath.join(dt_dpath, 'dayTrip-%s.csv' % dt0.strftime('%Y%m%d'))
+            if opath.exists(fpath):
+                continue
+            target_date.append(dt0.date())
     #
-    logging(logging_fpath, 'handle the file; %s' % yymm)
-    trip_fpath = opath.join(trip_dpath, 'trip-%s.csv' % yymm)
-    handling_day = 0
-    vid_lastLocTime, vehicles = {}, {}
-    try:
-        with open(trip_fpath) as tripFile:
-            tripReader = csv.DictReader(tripFile)
-            for row in tripReader:
-                did = int(row['driver_id'])
-                if did == -1:
-                    continue
-                day, hour = map(int, [row[cn] for cn in ['day', 'hour']])
-                if day == 1 and hour <= AM5:
-                    continue
-                if AM2 <= hour and hour <= AM5:
-                    continue
-                if day != handling_day and hour == AM5 + 1:
-                    handling_day = day
-                    logging(logging_fpath, 'handling %dth day' % handling_day)
-                    vid_lastLocTime, vehicles = {}, {}
-                    log_fpath = opath.join(apDL_dpath, 'ap-dayLog-%s%02d.csv' % (yymm, handling_day))
-                    with open(log_fpath) as logFile:
-                        logReader = csv.DictReader(logFile)
-                        for rowL in logReader:
-                            vid = int(rowL['driver_id'])
-                            if not vid in vehicles:
-                                vehicles[vid] = vehicle(vid)
-                            vehicles[vid].add_trajectory(eval(rowL['time']), rowL['apBasePos'])
+    return target_date
+
+
+def process_dates(wid, dts, logging_fpath):
+    for dt0 in dts:
+        ofpath = opath.join(dt_dpath, 'dayTrip-%s.csv' % dt0.strftime('%Y%m%d'))
+        with open(ofpath, 'wt') as w_csvfile:
+            writer = csv.writer(w_csvfile, lineterminator='\n')
+            new_header = [
+                'year', 'month', 'day', 'dow', 'hour',
+                'taxi_id', 'driver_id', 'fare',
+                'previous_dropoff_latitude', 'previous_dropoff_longitude',
+                'start_latitude', 'start_longitude',
+                'end_latitude', 'end_longitude',
+                'previous_dropoff_loc', 'start_loc', 'end_loc',
+                'time_previous_dropoff', 'start_time', 'end_time']
+            writer.writerow(new_header)
+        #
+        vid_lastLocTime, vehicles = {}, {}
+        for h in TARGET_HOURS:
+            if h in [0, 1]:
+                next_dt = dt0 + timedelta(days=1)
+                dt1 = datetime(next_dt.year, next_dt.month, next_dt.day, h)
+            else:
+                dt1 = datetime(dt0.year, dt0.month, dt0.day, h)
+            logging(logging_fpath, 'Worker %d: handling %s' % (wid, str(dt1)))
+            ifpath = opath.join(trip_dpath, 'trip-%s.csv' % dt1.strftime('%Y%m%d%H'))
+            with open(ifpath) as r_csvfile:
+                reader = csv.DictReader(r_csvfile)
+                for row in reader:
+                    vid = int(row['taxi_id'])
+                    eLat, eLng, eLoc, eTime = [row[cn] for cn in ['end_latitude', 'end_longitude', 'end_loc', 'end_time']]
+                    if not vid in vid_lastLocTime:
+                        vid_lastLocTime[vid] = (eLat, eLng, eLoc, eTime)
+                        continue
+                    latPrevDropoff, lngPrevDropoff, locPrevDropoff, tPrevDropoff = vid_lastLocTime[vid]
                     #
-                    ofpath = opath.join(apDT_dpath, 'ap-dayTrip-%s%02d.csv' % (yymm, handling_day))
-                    with open(ofpath, 'wt') as w_csvfile:
+                    new_row = [row[cn] for cn in ['year', 'month', 'day', 'dow', 'hour',
+                                                  'taxi_id', 'driver_id', 'fare']]
+                    new_row += [latPrevDropoff, lngPrevDropoff]
+                    new_row += [row[cn] for cn in ['start_latitude', 'start_longitude',
+                                                   'end_latitude', 'end_longitude']]
+                    new_row += [locPrevDropoff]
+                    new_row += [row[cn] for cn in ['start_loc', 'end_loc']]
+                    new_row += [tPrevDropoff]
+                    new_row += [row[cn] for cn in ['start_time', 'end_time']]
+                    with open(ofpath, 'a') as w_csvfile:
                         writer = csv.writer(w_csvfile, lineterminator='\n')
-                        new_header = [
-                            'year', 'month', 'day', 'dow', 'hour',
-                            'taxi_id', 'driver_id', 'fare',
-                            'start_latitude', 'start_longitude', 'start_time',
-                            'end_latitude', 'end_longitude', 'end_time',
-                            'start_loc', 'end_loc',
-                            'time_first_free', 'time_previous_dropoff', 'time_enter_airport', 'time_exit_airport',
-                            'previous_dropoff_latitude', 'previous_dropoff_longitude', 'previous_dropoff_loc',
-                        ]
-                        writer.writerow(new_header)
-                vid = int(row['taxi_id'])
-                if not vid in vehicles:
-                    continue
-                sLoc, eLoc = [row[cn] for cn in ['start_loc', 'end_loc']]
-                sTime, eTime = map(eval, [row[cn] for cn in ['start_time', 'end_time']])
-                eLat, eLng = map(eval, [row[cn] for cn in ['end_latitude', 'end_longitude']])
-                if not vid in vid_lastLocTime:
-                    vid_lastLocTime[vid] = (eLat, eLng, eLoc, eTime)
-                    continue
-                latPrevDropoff, lngPrevDropoff, locPrevDropoff, tPrevDropoff = vid_lastLocTime[vid]
-                if not (locPrevDropoff == 'X' and sLoc == 'X'):
-                    tEnter, tExit = vehicles[vid].find_eeTime_AP(sTime, sLoc)
-                    newInfo = [tPrevDropoff, tEnter, tExit,
-                               latPrevDropoff, lngPrevDropoff, locPrevDropoff]
-                    add_row(ofpath, row, newInfo)
-                else:
-                    visitAP, tEnter, tExit = vehicles[vid].find_eeTime_XAP(tPrevDropoff, sTime)
-                    if visitAP:
-                        newInfo = [tPrevDropoff, tEnter, tExit,
-                                   latPrevDropoff, lngPrevDropoff, locPrevDropoff]
-                        add_row(ofpath, row, newInfo)
-                vid_lastLocTime[vid] = (eLat, eLng, eLoc, eTime)
-    except Exception as _:
-        logging(logging_fpath, format_exc())
-        raise
+                        writer.writerow(new_row)
 
 
-def add_row(ofpath, row, newInfo):
-    with open(ofpath, 'a') as w_csvfile:
-        writer = csv.writer(w_csvfile, lineterminator='\n')
-        new_row = [row[cn] for cn in ['year', 'month', 'day', 'dow', 'hour',
-                                      'taxi_id', 'driver_id', 'fare',
-                                      'start_latitude', 'start_longitude', 'start_time',
-                                      'end_latitude', 'end_longitude', 'end_time',
-                                      'start_loc', 'end_loc',
-                                      'time_first_free']]
-        new_row += newInfo
-        writer.writerow(new_row)
-
-
-class vehicle(object):
-    def __init__(self, vid):
-        self.vid = vid
-        self.tra_time, self.tra_loc = [], []
-
-    def add_trajectory(self, t, loc):
-        self.tra_time.append(t)
-        self.tra_loc.append(loc)
-
-    def find_eeTime_AP(self, pickupTime, pickUpTerminal):
-        i = bisect(self.tra_time, pickupTime)
-        if i == len(self.tra_loc):
-            entering_time, exiting_time = self.tra_time[i - 1], 1e400
-        else:
-            loc0, loc1 = self.tra_loc[i - 1], self.tra_loc[i]
-            if loc0 == pickUpTerminal:
-                entering_time, exiting_time = self.tra_time[i - 1], self.tra_time[i]
-            elif loc1 == pickUpTerminal:
-                if i + 1 == len(self.tra_loc):
-                    entering_time, exiting_time = self.tra_time[i], 1e400
-                else:
-                    entering_time, exiting_time = self.tra_time[i], self.tra_time[i + 1]
-            else:
-                entering_time, exiting_time = 1e400, 1e400
-        return entering_time, exiting_time
-
-    def find_eeTime_XAP(self, tPrevDropoff, tPickUp):
-        i, j = [bisect(self.tra_time, t) for t in [tPrevDropoff, tPickUp]]
-        tEnter, tExit = None, None
-        if i == len(self.tra_loc):
-            visitAP = False
-            return visitAP, tEnter, tExit
-        else:
-            for k in range(i, j):
-                loc = self.tra_loc[k]
-                if tEnter == None and loc != 'X':
-                    tEnter = self.tra_time[k]
-                if tEnter != None and loc == 'X':
-                    tExit = self.tra_time[k]
-                    visitAP = True
-                    break
-            else:
-                visitAP = False
-            return visitAP, tEnter, tExit
+def run(prefix=None):
+    logging_fpath = opath.join(lf_dpath, 'a3.txt')
+    logging(logging_fpath, 'Start handling')
+    target_date = get_target_dates(prefix)
+    worker_dts = [[] for _ in range(NUM_WORKER)]
+    for i, dt in enumerate(target_date):
+        worker_dts[i % NUM_WORKER].append(dt)
+    #
+    ps = []
+    for wid, dts in enumerate(worker_dts):
+        p = multiprocessing.Process(target=process_dates,
+                                    args=(wid, dts, logging_fpath))
+        ps.append(p)
+        p.start()
+    for p in ps:
+        p.join()
 
 
 if __name__ == '__main__':
-    run('0901')
+    run()

@@ -16,6 +16,8 @@ test_dpath = opath.join(data_dpath, 'Test')
 
 #
 trip_dpath = opath.join(pf_dpath, 'trip')
+dt_dpath = opath.join(trip_dpath, 'dayTrip')
+
 log_dpath = opath.join(pf_dpath, 'log')
 flight_dpath = opath.join(pf_dpath, 'flight')
 apDL_dpath = opath.join(log_dpath, 'ap_dayLog')
@@ -30,6 +32,9 @@ apDNF_dpath = opath.join(flight_dpath, 'ap_dayNumFlights')
 dir_paths = [data_dpath, geo_dpath,
              lf_dpath, ef_dpath, pf_dpath,
              trip_dpath, apDT_dpath, apDNT_dpath,
+             dt_dpath,
+
+
              log_dpath, apDL_dpath,
              flight_dpath, apDF_dpath, apDNF_dpath,
 
