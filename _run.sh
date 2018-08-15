@@ -12,7 +12,7 @@
 
 
 python3 -c "from util_cython import gen_cFile; gen_cFile('a3_dayTrip')"
-python3 -c "from a3_dayTrip import run; run('0911')" &
+python3 -c "from a3_dayTrip import run; run('1001')" &
 
 
 
