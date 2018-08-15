@@ -68,13 +68,6 @@ def get_trajectory(dt0):
             dt1 = datetime(next_dt.year, next_dt.month, next_dt.day, h)
         else:
             dt1 = datetime(dt0.year, dt0.month, dt0.day, h)
-
-
-        # if dt1.hour not in [6, 7, 8]:
-        #     continue
-
-
-
         fpath = opath.join(log_dpath, 'log-%s.csv' % dt1.strftime('%Y%m%d%H'))
         fns.append(fpath)
     worker_fns = [[] for _ in range(NUM_WORKERS)]
