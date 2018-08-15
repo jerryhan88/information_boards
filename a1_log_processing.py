@@ -10,7 +10,7 @@ from util_logging import logging
 #
 from __path_organizer import TAXI_RAW_DATA_HOME, lf_dpath, log_dpath
 
-NUM_WORKER = 6
+NUM_WORKERS = 6
 
 
 def process_dates(wid, dts, logging_fpath):
@@ -71,9 +71,9 @@ def run(yymm):
     last_date = datetime(yymm_dt.year, yymm_dt.month, numDays)
     nm_first_day = last_date + timedelta(days=1)
     handling_date = first_date
-    worker_dts = [[] for _ in range(NUM_WORKER)]
+    worker_dts = [[] for _ in range(NUM_WORKERS)]
     while handling_date < nm_first_day:
-        worker_dts[int((handling_date.day - 1) / numDays * NUM_WORKER)].append(handling_date)
+        worker_dts[int((handling_date.day - 1) / numDays * NUM_WORKERS)].append(handling_date)
         handling_date += timedelta(days=1)
     #
     ps = []

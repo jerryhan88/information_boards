@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from util_geoFunctions import get_ap_polygons
 from util_logging import logging
 #
-from __path_organizer import TAXI_RAW_DATA_HOME, test_dpath, lf_dpath
+from __path_organizer import TAXI_RAW_DATA_HOME, test_dpath, log_dpath
 
 
 
@@ -59,6 +59,26 @@ def extract_from_raw(yymmdd, hh=None, taxi_id=None):
                 writer.writerow(new_row)
 
 
-if __name__ == '__main__':
-    extract_from_raw('091101', hh='05', taxi_id=8557)
+def extract_from_dhLog(yyyymmddhh, taxi_id):
+    dt = datetime.strptime(yyyymmddhh, '%Y%m%d%H')
+    ifpath = opath.join(log_dpath, 'log-%s.csv' % dt.strftime('%Y%m%d%H'))
+    #
+    ofpath = opath.join(test_dpath, 'log-%s-%d.csv' % (dt.strftime('%Y%m%d%H'), taxi_id))
+    with open(ofpath, 'w') as w_csvfile:
+        writer = csv.writer(w_csvfile, lineterminator='\n')
+        new_header = ['time', 'taxi_id', 'driver_id', 'state', 'lng', 'lat', 'apBasePos']
+        writer.writerow(new_header)
+    with open(ifpath) as r_csvfile:
+        reader = csv.DictReader(r_csvfile)
+        for row in reader:
+            vid = int(row['taxi_id'])
+            if vid != taxi_id:
+                continue
+            with open(ofpath, 'a') as w_csvfile:
+                writer = csv.writer(w_csvfile, lineterminator='\n')
+                writer.writerow([row[cn] for cn in new_header])
 
+
+if __name__ == '__main__':
+    # extract_from_raw('091101', hh='05', taxi_id=8557)
+    extract_from_dhLog('2009110107', 14630)

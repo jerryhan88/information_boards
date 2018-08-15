@@ -11,7 +11,7 @@ from __path_organizer import lf_dpath, trip_dpath, dt_dpath
 AM2, AM6 = 2, 6
 TARGET_HOURS = list(range(AM6, 24))
 TARGET_HOURS += list(range(AM2))
-NUM_WORKER = 2
+NUM_WORKERS = 2
 
 
 def get_target_dates(prefix=None):
@@ -98,10 +98,10 @@ def process_dates(wid, dts, logging_fpath):
 def run(prefix=None):
     logging_fpath = opath.join(lf_dpath, 'a3.txt')
     logging(logging_fpath, 'Start handling')
-    target_date = get_target_dates(prefix)
-    worker_dts = [[] for _ in range(NUM_WORKER)]
-    for i, dt in enumerate(target_date):
-        worker_dts[i % NUM_WORKER].append(dt)
+    target_dates = get_target_dates(prefix)
+    worker_dts = [[] for _ in range(NUM_WORKERS)]
+    for i, dt in enumerate(target_dates):
+        worker_dts[i % NUM_WORKERS].append(dt)
     #
     ps = []
     for wid, dts in enumerate(worker_dts):
