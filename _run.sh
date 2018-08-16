@@ -15,6 +15,6 @@
 #python3 -c "from a3_dayTrip import run; run('1001')" &
 
 python3 -c "from util_cython import gen_cFile; gen_cFile('a4_apDayTrip')"
-python3 -c "from a4_apDayTrip import run; run('-200911')" &
-#python3 -c "from a4_apDayTrip import run; run('-201001')" &
+#python3 -c "from a4_apDayTrip import run; run('-200911')" &
+python3 -c "from a4_apDayTrip import run; run('-201001')" &
 
