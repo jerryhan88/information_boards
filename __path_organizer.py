@@ -27,7 +27,7 @@ apDNF_dpath = opath.join(flight_dpath, 'ap_dayNumFlights')
 
 
 
-dir_paths = [data_dpath, geo_dpath,
+dir_paths = [data_dpath, geo_dpath, viz_dpath,
              lf_dpath, ef_dpath, pf_dpath,
              trip_dpath,
              dt_dpath, adt_dpath,
