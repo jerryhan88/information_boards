@@ -21,8 +21,8 @@ def get_ap_polygons():
                 str_coords = str(pm.Polygon.outerBoundaryIs.LinearRing.coordinates)
                 points = []
                 for l in ''.join(str_coords.split()).split(',0')[:-1]:
-                    _long, _lat = l.split(',')
-                    points.append([eval(_long), eval(_lat)])
+                    _lng, _lat = l.split(',')
+                    points.append([eval(_lng), eval(_lat)])
                 terminal_coords[pm.name if pm.name != 'BudgetT' else 'B'] = points
         with open(fpath, 'wb') as fp:
             pickle.dump(terminal_coords, fp)
@@ -37,21 +37,6 @@ def get_ap_polygons():
     return ap_polygons
 
 
-def get_ns_polygon():
-    kml_doc = None
-    ifpath = opath.join(dpath['geo'], 'queues.kml')
-    with open(ifpath) as f:
-        kml_doc = parser.parse(f).getroot().Document
-    for pm in kml_doc.Placemark:
-        if pm.name == 'Night Safari':
-            str_coords = str(pm.Polygon.outerBoundaryIs.LinearRing.coordinates)
-            points = []
-            for l in ''.join(str_coords.split()).split(',0')[:-1]:
-                _long, _lat = l.split(',')
-                points.append([eval(_long), eval(_lat)])
-            return poly(points)
-
-
 class poly(Polygon):
     def __init__(self, poly_points):
         Polygon.__init__(self, poly_points)
@@ -64,4 +49,4 @@ class poly(Polygon):
 
 
 if __name__ == '__main__':
-    get_ap_polygons()
+    print(get_ap_polygons())

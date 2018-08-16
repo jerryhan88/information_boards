@@ -11,9 +11,8 @@ geo_dpath = opath.join(data_dpath, 'GeoFiles')
 lf_dpath = opath.join(data_dpath, '_logging')
 ef_dpath = opath.join(data_dpath, 'ExternalFiles')
 pf_dpath = opath.join(data_dpath, 'ProcessedFiles')
-
+viz_dpath = opath.join(data_dpath, 'Viz')
 test_dpath = opath.join(data_dpath, 'Test')
-
 #
 trip_dpath = opath.join(pf_dpath, 'trip')
 dt_dpath = opath.join(trip_dpath, 'dayTrip')
@@ -21,8 +20,6 @@ adt_dpath = opath.join(trip_dpath, 'apDayTrip')
 
 log_dpath = opath.join(pf_dpath, 'log')
 flight_dpath = opath.join(pf_dpath, 'flight')
-apDL_dpath = opath.join(log_dpath, 'ap_dayLog')
-apDT_dpath = opath.join(trip_dpath, 'ap_dayTrip')
 apDNT_dpath = opath.join(trip_dpath, 'ap_dayNumTaxis')
 apDF_dpath = opath.join(flight_dpath, 'ap_dayFlight')
 apDNF_dpath = opath.join(flight_dpath, 'ap_dayNumFlights')
@@ -32,11 +29,11 @@ apDNF_dpath = opath.join(flight_dpath, 'ap_dayNumFlights')
 
 dir_paths = [data_dpath, geo_dpath,
              lf_dpath, ef_dpath, pf_dpath,
-             trip_dpath, apDT_dpath, apDNT_dpath,
+             trip_dpath,
              dt_dpath, adt_dpath,
 
 
-             log_dpath, apDL_dpath,
+             log_dpath,
              flight_dpath, apDF_dpath, apDNF_dpath,
 
 
