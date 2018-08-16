@@ -49,8 +49,8 @@ def run(yymm):
                         new_header = [
                             'year', 'month', 'day', 'dow', 'hour',
                             'taxi_id', 'driver_id', 'fare',
-                            'start_latitude', 'start_longitude', 'start_time',
-                            'end_latitude', 'end_longitude', 'end_time',
+                            'start_longitude', 'start_latitude', 'start_time',
+                            'end_longitude', 'end_latitude', 'end_time',
                             'start_loc', 'end_loc',
                         ]
                         writer.writerow(new_header)

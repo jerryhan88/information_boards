@@ -109,9 +109,9 @@ def run(prefix=None):
             new_header = [
                 'year', 'month', 'day', 'dow', 'hour',
                 'taxi_id', 'driver_id', 'fare',
-                'previous_dropoff_latitude', 'previous_dropoff_longitude',
-                'start_latitude', 'start_longitude',
-                'end_latitude', 'end_longitude',
+                'previous_dropoff_longitude', 'previous_dropoff_latitude',
+                'start_longitude', 'start_latitude',
+                'end_longitude', 'end_latitude',
                 'previous_dropoff_loc', 'start_loc', 'end_loc',
                 'time_previous_dropoff', 'time_enter_airport', 'start_time', 'time_exit_airport', 'end_time',
                 'time_first_free']

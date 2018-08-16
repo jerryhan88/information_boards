@@ -1,4 +1,5 @@
 import os.path as opath
+import os
 import sys
 import csv
 from datetime import datetime
@@ -57,6 +58,21 @@ FRAME_ORIGIN = (60, 100)
 Traj_dotSize = 2
 TE_MARKER_SIZE = 10
 
+trip_events = ['P', 'S', 'E', 'EN', 'EX', 'F']
+fp, ep = 0.8, 0.95
+intv = (ep - fp) / (len(trip_events) / 2)
+TE_POS = {}
+
+for i, en in enumerate(trip_events):
+    x = WIDTH * 0.75
+    if en in ['P', 'S', 'E']:
+        y = HEIGHT * (fp + i * intv)
+    else:
+        y = HEIGHT * (fp + i * intv - 0.85)
+    TE_POS[en] = (x, y)
+
+
+FONT = QFont('Decorative', 25)
 
 
 def convert_GPS2xy(lng, lat):
@@ -113,41 +129,43 @@ class Viz(QWidget):
             for lng, lat in list(poly.boundary.coords):
                 points.append(convert_GPS2xy(lng, lat))
             self.objForDrawing.append(Terminal(poly.name, points))
-        if self.fpaths:
-            with open(self.fpaths['tripF']) as r_csvfile:
-                reader = csv.DictReader(r_csvfile)
-                for row in reader:
-                    pLat, pLng = map(eval, [row[cn] for cn in ['previous_dropoff_latitude', 'previous_dropoff_longitude']])
-                    sLat, sLng = map(eval, [row[cn] for cn in ['start_latitude', 'start_longitude']])
-                    eLat, eLng = map(eval, [row[cn] for cn in ['end_latitude', 'end_longitude']])
-                    tPrev, tStart, tEnd = map(eval, [row[cn] for cn in ['time_previous_dropoff', 'start_time', 'end_time']])
-                    tEnter, tExit, tFree = map(eval, [row[cn] for cn in ['time_enter_airport', 'time_exit_airport', 'time_first_free']])
-            dt_tPrev, dt_tEnter, dt_tStart, dt_tExit, dt_tEnd, dt_tFree = map(datetime.fromtimestamp,
-                                                                    [tPrev, tEnter, tStart, tExit, tEnd, tFree])
-            trip_events = {
-                'P': [dt_tPrev, convert_GPS2xy(pLng, pLat)],
-                'S': [dt_tStart, convert_GPS2xy(sLng, sLat)],
-                'E': [dt_tEnd, convert_GPS2xy(eLng, eLat)],
-            }
-            logs = []
-            with open(self.fpaths['logF']) as r_csvfile:
-                reader = csv.DictReader(r_csvfile)
-                for row in reader:
-                    state, lng, lat = map(eval, [row[cn] for cn in ['state', 'lng', 'lat']])
-                    x, y = convert_GPS2xy(lng, lat)
-                    logs.append((state, x, y))
-                    #
-                    t = eval(row['time'])
-                    if t == tEnter:
-                        trip_events['EN'] = [dt_tEnter, (x, y)]
-                    if t == tExit:
-                        trip_events['EX'] = [dt_tExit, (x, y)]
-                    if t == tFree:
-                        trip_events['F'] = [dt_tFree, (x, y)]
-            for en in ['EN', 'EX', 'F']:
-                assert en in trip_events
-            self.objForDrawing.append(Trajectory(trip_events, logs))
 
+        assert self.fpaths
+        with open(self.fpaths['tripF']) as r_csvfile:
+            reader = csv.DictReader(r_csvfile)
+            for row in reader:
+                pLoc, sLoc, eLoc = [row[cn] for cn in ['previous_dropoff_loc', 'start_loc', 'end_loc']]
+                pLat, pLng = map(eval, [row[cn] for cn in ['previous_dropoff_latitude', 'previous_dropoff_longitude']])
+                sLat, sLng = map(eval, [row[cn] for cn in ['start_latitude', 'start_longitude']])
+                eLat, eLng = map(eval, [row[cn] for cn in ['end_latitude', 'end_longitude']])
+                tPrev, tStart, tEnd = map(eval, [row[cn] for cn in ['time_previous_dropoff', 'start_time', 'end_time']])
+                tEnter, tExit, tFree = map(eval, [row[cn] for cn in ['time_enter_airport', 'time_exit_airport', 'time_first_free']])
+        dt_tPrev, dt_tEnter, dt_tStart, dt_tExit, dt_tEnd, dt_tFree = map(datetime.fromtimestamp,
+                                                                [tPrev, tEnter, tStart, tExit, tEnd, tFree])
+        trip_events = {
+            'P': [dt_tPrev, pLoc, convert_GPS2xy(pLng, pLat)],
+            'S': [dt_tStart, sLoc, convert_GPS2xy(sLng, sLat)],
+            'E': [dt_tEnd, eLoc, convert_GPS2xy(eLng, eLat)],
+        }
+        logs = []
+        with open(self.fpaths['logF']) as r_csvfile:
+            reader = csv.DictReader(r_csvfile)
+            for row in reader:
+                state, lng, lat = map(eval, [row[cn] for cn in ['state', 'lng', 'lat']])
+                loc  = row['apBasePos']
+                x, y = convert_GPS2xy(lng, lat)
+                logs.append((state, x, y))
+                #
+                t = eval(row['time'])
+                if t == tEnter:
+                    trip_events['EN'] = [dt_tEnter, loc, (x, y)]
+                if t == tExit:
+                    trip_events['EX'] = [dt_tExit, loc, (x, y)]
+                if t == tFree:
+                    trip_events['F'] = [dt_tFree, loc, (x, y)]
+        # for en in ['EN', 'EX', 'F']:
+        #     assert en in trip_events, self.fpaths['logF']
+        self.objForDrawing.append(Trajectory(trip_events, logs))
 
     def paintEvent(self, e):
         for canvas in [self, self.image]:
@@ -160,15 +178,11 @@ class Viz(QWidget):
         for o in self.objForDrawing:
             o.draw(qp)
 
-    def save_img(self, img_fpath):
-        assert img_fpath.endswith('.png')
-        self.image.save(img_fpath, 'png')
+    def save_img(self):
+        self.image.save(self.fpaths['vizF'], 'png')
 
 
 class Trajectory(object):
-
-    T_X, T_Y = WIDTH * 0.5, HEIGHT * 0.5
-
     def __init__(self, trip_events, logs):
         self.logs = logs
         self.trip_events = trip_events
@@ -192,22 +206,22 @@ class Trajectory(object):
                            Traj_dotSize, Traj_dotSize)
             ps, px, py = cs, cx, cy
 
-        pen = QPen(Qt.black, 1, Qt.SolidLine)
-        qp.setPen(pen)
-        for en, (et, (cx, cy)) in self.trip_events.items():
-            for x0, y0, x1, y1 in [
-                (cx, cy, cx + TE_MARKER_SIZE, cy + TE_MARKER_SIZE),
-                (cx + TE_MARKER_SIZE, cy, cx, cy + TE_MARKER_SIZE),
-            ]:
+        qp.setFont(FONT)
+        for en, (et, loc, (cx, cy)) in self.trip_events.items():
+            pen = QPen(Qt.black, 2, Qt.SolidLine)
+            qp.setPen(pen)
+            ul = cx - TE_MARKER_SIZE / 2, cy - TE_MARKER_SIZE / 2
+            ur = cx + TE_MARKER_SIZE / 2, cy - TE_MARKER_SIZE / 2
+            bl = cx - TE_MARKER_SIZE / 2, cy + TE_MARKER_SIZE / 2
+            br = cx + TE_MARKER_SIZE / 2, cy + TE_MARKER_SIZE / 2
+            for (x0, y0), (x1, y1) in [(ul, br), (ur, bl)]:
                 qp.drawLine(x0, y0, x1, y1)
-            if en == 'P':
-                qp.drawText(Trajectory.T_X, Trajectory.T_Y, en)
-
-                qp.drawLine(Trajectory.T_X, Trajectory.T_Y, cx, cy)
-            else:
-                qp.drawText(cx, cy, en)
-
             #
+            x, y = TE_POS[en]
+            pen = QPen(Qt.black, 1.0, Qt.DashDotLine)
+            qp.setPen(pen)
+            qp.drawLine(x, y, cx, cy)
+            qp.drawText(x, y, '%s: %s (%s)' % (en, str(et), loc))
 
 
 class Terminal(object):
@@ -216,7 +230,7 @@ class Terminal(object):
         self.polyCoords = polyCoords
 
     def draw(self, qp):
-        pen = QPen(QColor(Color('brown').get_hex_l()), 0.5, Qt.DashDotLine)
+        pen = QPen(QColor(Color('brown').get_hex_l()), 1.0)
         qp.setPen(pen)
         for i in range(len(self.polyCoords) - 1):
             x0, y0 = self.polyCoords[i]
@@ -261,12 +275,40 @@ class Singapore(object):
 
 
 
-if __name__ == '__main__':
-    viz_fpath = 'temp.png'
+def runSingle():
     fpaths = {'logF': opath.join(viz_dpath, 'XAX-log.csv'),
-              'tripF': opath.join(viz_dpath, 'XAX-trip.csv')}
+              'tripF': opath.join(viz_dpath, 'XAX-trip.csv'),
+              'vizF': opath.join(viz_dpath, 'XAX.png')}
     #
     app = QApplication(sys.argv)
     viz = Viz(fpaths)
-    viz.save_img(viz_fpath)
+    viz.save_img()
     sys.exit(app.exec_())
+
+
+def gen_imgs():
+    prefixes = set()
+    for fn in os.listdir(viz_dpath):
+        if not fn.endswith('trip.csv'):
+            continue
+        prefix, _ = fn[:-len('.csv')].split('-')
+        prefixes.add(prefix)
+    #
+    for prefix in prefixes:
+        fpaths = {'logF': opath.join(viz_dpath, '%s-log.csv' % prefix),
+                  'tripF': opath.join(viz_dpath, '%s-trip.csv' % prefix),
+                  'vizF': opath.join(viz_dpath, '%s.png' % prefix)}
+
+        app = QApplication(sys.argv)
+        viz = Viz(fpaths)
+        viz.save_img()
+        app.quit()
+        del app
+
+
+
+
+if __name__ == '__main__':
+    # runSingle()
+
+    gen_imgs()
