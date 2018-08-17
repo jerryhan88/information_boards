@@ -1,43 +1,50 @@
 import os.path as opath
 import os
-from datetime import datetime, timedelta
-import csv
+import pandas as pd
 #
-from __path_organizer import viz_dpath
-from _log_extractor import extract_from_dhLog
+from __path_organizer import adt_dpath
+
+df_200911 = pd.read_csv(opath.join(adt_dpath, 'apDayTrip-20091101.csv'))
+df_201001 = pd.read_csv(opath.join(adt_dpath, 'apDayTrip-20100101.csv'))
+
+df = df_200911.append(df_201001)
+
+df_200911.columns
+list(map(len, [df_200911, df_201001, df]))
+
+SEC60 = 60
+
+
+df['interTrip'] = (df['start_time'] - df['time_previous_dropoff']) / SEC60
+df['interTrip'].hist()
+
+df['duration'] = (df['end_time'] - df['start_time']) / SEC60
+df['duration'].hist()
+
+df['untilFirstFree'] = (df['time_first_free'] - df['time_previous_dropoff']) / SEC60
+df['untilFirstFree'].hist()
+df[(df['untilFirstFree'] < 50)]['untilFirstFree'].hist()
+
+
+df['QTime'] = (df['start_time'] - df['time_enter_airport']) / SEC60
+df['QTime'].hist()
 
 
 
-for fn in os.listdir(viz_dpath):
-    if not fn.endswith('trip.csv'):
-        continue
-    prefix, _ = fn[:-len('.csv')].split('-')
-    ofpath = opath.join(viz_dpath, '%s-log.csv' % prefix)
-    with open(ofpath, 'w') as w_csvfile:
-        writer = csv.writer(w_csvfile, lineterminator='\n')
-        new_header = ['time', 'taxi_id', 'driver_id', 'state', 'lng', 'lat', 'apBasePos']
-        writer.writerow(new_header)
-    #
-    ifpath = opath.join(viz_dpath, fn)
-    with open(ifpath) as r_csvfile:
-        reader = csv.DictReader(r_csvfile)
-        for row in reader:
-            vid = int(row['taxi_id'])
-            tPrev, tEnter, tStart, tExit, tEnd = map(eval, [row[cn] for cn in ['time_previous_dropoff', 'time_enter_airport', 'start_time', 'time_exit_airport', 'end_time']])
-    dt_tPrev, dt_tEnter, dt_tStart, dt_tExit, dt_tEnd = map(datetime.fromtimestamp, [tPrev, tEnter, tStart, tExit, tEnd])
-    #
-    rows = []
-    handling_dt = dt_tPrev
-    while handling_dt < dt_tEnd:
-        row = extract_from_dhLog(handling_dt.strftime('%Y%m%d%H'), vid, returnInstances=True)
-        rows += row
-        handling_dt += timedelta(hours=1)
-    for row in rows:
-        t = eval(row['time'])
-        if t < tPrev:
-            continue
-        if t > tEnd:
-            break
-        with open(ofpath, 'a') as w_csvfile:
-            writer = csv.writer(w_csvfile, lineterminator='\n')
-            writer.writerow([row[cn] for cn in new_header])
+tdf = df[(df['previous_dropoff_loc'] == 'X') & (df['start_loc'] != 'X')]
+tdf['QTime'].hist()
+
+
+tdf['QTime'].mean()
+
+
+df_strange = df[(df['start_time'] <= df['time_exit_airport'])]
+df_strange.head()
+
+
+df.columns
+
+df.head()
+
+df_200911X = df_200911
+

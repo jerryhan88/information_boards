@@ -133,4 +133,6 @@ def extract_by_tripInstance():
 
 if __name__ == '__main__':
     # extract_from_raw('091101', hh='05', taxi_id=8557)
-    extract_from_dhLog('2009110106', 10995)
+    # extract_from_dhLog('2009110106', 10995)
+
+    extract_by_tripInstance()
