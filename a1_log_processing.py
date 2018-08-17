@@ -10,7 +10,7 @@ from util_logging import logging
 #
 from __path_organizer import TAXI_RAW_DATA_HOME, lf_dpath, log_dpath
 
-NUM_WORKERS = 6
+NUM_WORKERS = 8
 
 
 def process_dates(wid, dts, logging_fpath):
@@ -61,30 +61,31 @@ def process_dates(wid, dts, logging_fpath):
                 writer.writerow(new_row)
 
 
-def run(yymm):
-    logging_fpath = opath.join(lf_dpath, 'a1_%s.txt' % yymm)
-    logging(logging_fpath, 'Start handling; %s' % yymm)
-    #
-    yymm_dt = datetime.strptime(yymm, '%y%m')
-    _, numDays = monthrange(yymm_dt.year, yymm_dt.month)
-    first_date = yymm_dt
-    last_date = datetime(yymm_dt.year, yymm_dt.month, numDays)
-    nm_first_day = last_date + timedelta(days=1)
-    handling_date = first_date
-    worker_dts = [[] for _ in range(NUM_WORKERS)]
-    while handling_date < nm_first_day:
-        worker_dts[int((handling_date.day - 1) / numDays * NUM_WORKERS)].append(handling_date)
-        handling_date += timedelta(days=1)
-    #
-    ps = []
-    for wid, dts in enumerate(worker_dts):
-        p = multiprocessing.Process(target=process_dates,
-                                    args=(wid, dts, logging_fpath))
-        ps.append(p)
-        p.start()
-    for p in ps:
-        p.join()
+def run(target_months):
+    for yymm in target_months:
+        logging_fpath = opath.join(lf_dpath, 'a1_%s.txt' % yymm)
+        logging(logging_fpath, 'Start handling; %s' % yymm)
+        #
+        yymm_dt = datetime.strptime(yymm, '%y%m')
+        _, numDays = monthrange(yymm_dt.year, yymm_dt.month)
+        first_date = yymm_dt
+        last_date = datetime(yymm_dt.year, yymm_dt.month, numDays)
+        nm_first_day = last_date + timedelta(days=1)
+        handling_date = first_date
+        worker_dts = [[] for _ in range(NUM_WORKERS)]
+        while handling_date < nm_first_day:
+            worker_dts[int((handling_date.day - 1) / numDays * NUM_WORKERS)].append(handling_date)
+            handling_date += timedelta(days=1)
+        #
+        ps = []
+        for wid, dts in enumerate(worker_dts):
+            p = multiprocessing.Process(target=process_dates,
+                                        args=(wid, dts, logging_fpath))
+            ps.append(p)
+            p.start()
+        for p in ps:
+            p.join()
 
 
 if __name__ == '__main__':
-    run('0911')
+    run(['0911'])

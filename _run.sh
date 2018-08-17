@@ -4,7 +4,7 @@
 #python3 -c "from _log_extractor import run; run('091101', hh='05', taxi_id=6326)" &
 
 python3 -c "from util_cython import gen_cFile; gen_cFile('a1_log_processing')"
-python3 -c "from a1_log_processing import run; run('0904')" &
+python3 -c "from a1_log_processing import run; run(['0904', '0905', '0906', '0907', '0908', '0909', '0910'])" &
 
 
 #python3 -c "from util_cython import gen_cFile; gen_cFile('a2_trip_processing')"
