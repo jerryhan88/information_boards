@@ -10,7 +10,7 @@ from util_logging import logging
 #
 from __path_organizer import TAXI_RAW_DATA_HOME, lf_dpath, log_dpath
 
-NUM_WORKERS = 8
+NUM_WORKERS = 11
 
 
 def process_dates(wid, dts, logging_fpath):
