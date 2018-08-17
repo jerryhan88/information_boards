@@ -93,6 +93,8 @@ def process_dates(wid, dts, logging_fpath):
                     with open(ofpath, 'a') as w_csvfile:
                         writer = csv.writer(w_csvfile, lineterminator='\n')
                         writer.writerow(new_row)
+                    #
+                    vid_lastLocTime[vid] = (eLat, eLng, eLoc, eTime)
 
 
 def run(prefix=None):
