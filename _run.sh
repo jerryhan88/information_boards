@@ -8,7 +8,7 @@
 
 
 python3 -c "from util_cython import gen_cFile; gen_cFile('a2_trip_processing')"
-python3 -c "from a2_trip_processing import run; run('1007')" &
+python3 -c "from a2_trip_processing import run; run('0905')" &
 
 
 #python3 -c "from util_cython import gen_cFile; gen_cFile('a3_dayTrip')"
