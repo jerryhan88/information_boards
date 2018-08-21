@@ -1,13 +1,43 @@
+import os.path as opath
+import os
 import sys
+import multiprocessing
 from datetime import datetime
 import csv
 #
 from ucp_geoFunctions import get_ap_polygons
+from __path_organizer import DATA_HOME
 
 AVAILABLE, BUSY, HIRED, ON_CALL, CHANGE_SHIFT, OFFLINE = range(1, 7)
+NUM_WORKERS = 11
 
 
-def run(ifpath, ofpath, sDay, eDay):
+
+def run(ifpath, dpath):
+
+    fn = opath.basename(ifpath)
+    print(fn)
+    print(DATA_HOME)
+
+
+    assert False
+
+    ap_polygons = get_ap_polygons()
+    with open(ifpath) as r_csvfile:
+        reader = csv.DictReader(r_csvfile)
+        for row in reader:
+            vid, status = map(int, [row[cn] for cn in ['taxi_num_id', 'taxi_status']])
+            lat, lon = map(float, [row[cn] for cn in ['latitude_val', 'longitude_val']])
+            dt = datetime.strptime(row['min_time'], "%Y-%m-%d %H:%M:%S")
+
+
+
+    assert False
+
+
+
+
+
     with open(ofpath, 'wt') as w_csvfile:
         writer = csv.writer(w_csvfile, lineterminator='\n')
         new_header = ['time', 'taxi_id', 'state', 'apBasePos']
@@ -43,11 +73,9 @@ def run(ifpath, ofpath, sDay, eDay):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 5:
-        ifpath, ofpath, sDay, eDay = [sys.argv[i] for i in range(1, len(sys.argv))]
-    else:
-        ifpath = 'log_sample.csv'
-        ofpath = 'log_out.csv'
-        sDay, eDay = 1, 1
-
-    run(ifpath, ofpath, sDay, eDay)
+    assert len(sys.argv) == 3
+    ifpath, dpath = [sys.argv[i] for i in range(1, len(sys.argv))]
+    if not opath.exists(dpath):
+        os.mkdir(dpath)
+    #
+    run(ifpath, dpath)
