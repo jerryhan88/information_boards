@@ -17,20 +17,19 @@ test_dpath = opath.join(data_dpath, 'Test')
 trip_dpath = opath.join(pf_dpath, 'trip')
 dt_dpath = opath.join(trip_dpath, 'dayTrip')
 adt_dpath = opath.join(trip_dpath, 'apDayTrip')
+aggr_dpath = opath.join(trip_dpath, 'aggrTrip')
+
 
 log_dpath = opath.join(pf_dpath, 'log')
 flight_dpath = opath.join(pf_dpath, 'flight')
-apDNT_dpath = opath.join(trip_dpath, 'ap_dayNumTaxis')
 apDF_dpath = opath.join(flight_dpath, 'ap_dayFlight')
 apDNF_dpath = opath.join(flight_dpath, 'ap_dayNumFlights')
-
-
 
 
 dir_paths = [data_dpath, geo_dpath, viz_dpath,
              lf_dpath, ef_dpath, pf_dpath,
              trip_dpath,
-             dt_dpath, adt_dpath,
+             dt_dpath, adt_dpath, aggr_dpath,
 
 
              log_dpath,
