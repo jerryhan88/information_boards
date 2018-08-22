@@ -6,13 +6,13 @@
 #python3 -c "from util_cython import gen_cFile; gen_cFile('a1_log_processing')"
 #python3 -c "from a1_log_processing import run; run(['1004', '1005', '1006', '1007', '1008', '1009', '1011', '1012'])" &
 
-python3 -c "from util_cython import gen_cFile; gen_cFile('a2_trip_processing')"
-python3 -c "from a2_trip_processing import run; run('1012')" &
+#python3 -c "from util_cython import gen_cFile; gen_cFile('a2_trip_processing')"
+#python3 -c "from a2_trip_processing import run; run('1012')" &
 
 #python3 -c "from util_cython import gen_cFile; gen_cFile('a3_dayTrip')"
 #python3 -c "from a3_dayTrip import run; run()" &
 
-#python3 -c "from util_cython import gen_cFile; gen_cFile('a4_apDayTrip')"
-#python3 -c "from a4_apDayTrip import run; run('-200911')" &
+python3 -c "from util_cython import gen_cFile; gen_cFile('a4_apDayTrip')"
+python3 -c "from a4_apDayTrip import run; run()" &
 #python3 -c "from a4_apDayTrip import run; run('-201001')" &
 

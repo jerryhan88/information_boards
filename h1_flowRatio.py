@@ -6,55 +6,11 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 #
 from __path_organizer import aggr_dpath, h1data_dpath, h1chart_dpath
+from __common import HOURS, TERMINALS1, TERMINALS2
+from __common import clists, mlists, FIGSIZE
 
-
-HOURS = list(range(6, 24)) + [0, 1]
-TERMINALS1 = ['T1', 'T2', 'T3', 'B', 'X']
-TERMINALS2 = ['T1', 'T2', 'T3', 'T4', 'X']
-
-_rgb = lambda r, g, b: (r / float(255), g / float(255), b / float(255))
-clists = (
-    'blue', 'green', 'red', 'cyan', 'magenta', 'black',
-    _rgb(255, 165, 0),  # orange
-    _rgb(238, 130, 238),  # violet
-    _rgb(255, 228, 225),  # misty rose
-    _rgb(127, 255, 212),  # aqua-marine
-    'yellow',
-    _rgb(220, 220, 220),  # gray
-    _rgb(255, 165, 0),  # orange
-    'black'
-)
-mlists = (
-    'o',  #    circle
-    'v',  #    triangle_down
-    '^',  #    triangle_up
-    '<',  #    triangle_left
-    '>',  #    triangle_right
-    's',  #    square
-    'p',  #    pentagon
-    '*',  #    star
-    '+',  #    plus
-    'x',  #    x
-    'D',  #    diamond
-    'h',  #    hexagon1
-    '1',  #    tri_down
-    '2',  #    tri_up
-    '3',  #    tri_left
-    '4',  #    tri_right
-    '8',  #    octagon
-    'H',  #    hexagon2
-    'd',  #    thin_diamond
-    '|',  #    vline
-    '_',  #    hline
-    '.',  #    point
-    ',',  #    pixel
-
-    'D',  #    diamond
-    '8',  #    octagon
-    )
-
-FIGSIZE = (8, 6)
 FONT_SIZE = 13
+
 
 def gen_xlsx_file(terminals, ps_count, ofpath):
     wb = Workbook()
