@@ -1,33 +1,16 @@
 import os.path as opath
 import os
 import pandas as pd
-import csv
-import xlwt
 from openpyxl import Workbook, load_workbook
-from openpyxl.utils import get_column_letter
-from openpyxl.styles import Alignment
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 #
-from __path_organizer import aggr_dpath, h1data_dpath
+from __path_organizer import aggr_dpath, h1data_dpath, h1chart_dpath
 
 
 HOURS = list(range(6, 24)) + [0, 1]
 TERMINALS1 = ['T1', 'T2', 'T3', 'B', 'X']
 TERMINALS2 = ['T1', 'T2', 'T3', 'T4', 'X']
-
-cm_align=Alignment(horizontal='center',
-                    vertical='center',
-                    text_rotation=0,
-                    wrap_text=False,
-                    shrink_to_fit=False,
-                    indent=0)
-rm_align=Alignment(horizontal='right',
-                    vertical='center',
-                    text_rotation=0,
-                    wrap_text=False,
-                    shrink_to_fit=False,
-                    indent=0)
-
 
 _rgb = lambda r, g, b: (r / float(255), g / float(255), b / float(255))
 clists = (
@@ -70,61 +53,64 @@ mlists = (
     '8',  #    octagon
     )
 
-
+FIGSIZE = (8, 6)
+FONT_SIZE = 13
 
 def gen_xlsx_file(terminals, ps_count, ofpath):
     wb = Workbook()
-    ws = wb.active
-    ws.title = "RawNumber"
-    ws.merge_cells(start_row=1, start_column=1, end_row=2, end_column=1)
-    ws.merge_cells(start_row=1, start_column=2, end_row=1, end_column=7)
-    ori_cell, dest_cell = ws.cell(row=1, column=1), ws.cell(row=1, column=2)
+    ws_count = wb.active
+    ws_count.title = "Count"
+    ori_cell, dest_cell = ws_count.cell(row=2, column=1), ws_count.cell(row=1, column=2)
     ori_cell.value = 'Origin'
     dest_cell.value = 'Destination'
-    for cell in [ori_cell, dest_cell]:
-        cell.alignment = cm_align
     for i, tn in enumerate(terminals + ['Total']):
-        o_cell, d_cell = ws.cell(row=i + 3, column=1), ws.cell(row=2, column=i + 2)
+        o_cell, d_cell = ws_count.cell(row=i + 3, column=1), ws_count.cell(row=2, column=i + 2)
         for cell in [o_cell, d_cell]:
             cell.value = tn
-            cell.alignment = cm_align
+    pl_sc, sl_sc, totalCount = {}, {}, 0
     for i, prevLoc in enumerate(terminals):
+        sumCount = 0
         for j, startLoc in enumerate(terminals):
             k = prevLoc, startLoc
-            t_cell = ws.cell(row=i + 3, column=j + 2)
-            t_cell.value = ps_count[k] if k in ps_count else 0
-            t_cell.alignment = rm_align
+            count = ps_count[k] if k in ps_count else 0
+            sumCount += count
+            cell = ws_count.cell(row=i + 3, column=j + 2)
+            cell.value = count
+        totalCount += sumCount
         j += 1
-        t_cell = ws.cell(row=i + 3, column=j + 2)
-        bIndex = t_cell.col_idx - len(terminals)
-        eIndex = t_cell.col_idx - 1
-        t_cell.value = "=SUM(%s%d:%s%d)" % (get_column_letter(bIndex), t_cell.row,
-                                            get_column_letter(eIndex), t_cell.row)
-    for i, tn in enumerate(terminals + ['Total']):
-        t_cell = ws.cell(row=8, column=i + 2)
-        bIndex = t_cell.row - len(terminals)
-        eIndex = t_cell.row - 1
-        colName = t_cell.column
-        t_cell.value = "=SUM(%s%d:%s%d)" % (colName, bIndex, colName, eIndex)
+        cell = ws_count.cell(row=i + 3, column=j + 2)
+        cell.value = sumCount
+        pl_sc[prevLoc] = sumCount
+    for i, startLoc in enumerate(terminals):
+        cell = ws_count.cell(row=8, column=i + 2)
+        sumCount = 0
+        for prevLoc in terminals:
+            k = prevLoc, startLoc
+            count = ps_count[k] if k in ps_count else 0
+            sumCount += count
+        cell.value = sumCount
+        sl_sc[startLoc] = sumCount
+    i += 1
+    cell = ws_count.cell(row=8, column=i + 2)
+    cell.value = totalCount
+    #
+    ws_ratio = wb.copy_worksheet(ws_count)
+    ws_ratio.title = "Ratio"
+    for i, prevLoc in enumerate(terminals):
+        for j, startLoc in enumerate(terminals):
+            cell = ws_ratio.cell(row=i + 3, column=j + 2)
+            k = prevLoc, startLoc
+            count = ps_count[k] if k in ps_count else 0
+            cell.value = count / float(pl_sc[prevLoc])
+    for i, tn in enumerate(terminals):
+        cell = ws_ratio.cell(row=8, column=i + 2)
+        cell.value = pl_sc[tn] / float(totalCount)
         #
-    ws1 = wb.copy_worksheet(ws)
-    ws1.title = "Ratio"
-    totalCellCol = get_column_letter(2 + len(terminals))
-    for i in range(len(terminals)):
-        for j in range(len(terminals)):
-            cell = ws1.cell(row=i + 3, column=j + 2)
-            cell.value = "=%s!%s/%s!%s%d" % (ws.title, cell.coordinate, ws.title, totalCellCol, cell.row)
-            cell.number_format = '0.00%'
-
-    totalCell = ws['G8']
-    for i, tn in enumerate(terminals + ['Total']):
-        cell = ws1.cell(row=8, column=i + 2)
-        cell.value = "=%s!%s/%s!%s" % (ws.title, cell.coordinate, ws.title, totalCell.coordinate)
-        cell.number_format = '0.00%'
-        #
-        cell = ws1.cell(row=i + 3, column=7)
-        cell.value = "=%s!%s/%s!%s" % (ws.title, cell.coordinate, ws.title, totalCell.coordinate)
-        cell.number_format = '0.00%'
+        cell = ws_ratio.cell(row=i + 3, column=7)
+        cell.value = sl_sc[tn] / float(totalCount)
+    i += 1
+    cell = ws_ratio.cell(row=i + 3, column=7)
+    cell.value = totalCount/ float(totalCount)
     wb.save(filename=ofpath)
 
 
@@ -169,9 +155,25 @@ def arrange_datasets():
                     ps_count[prevLoc, startLoc] = hps_count[k] if k in hps_count else 0
             ofpath = opath.join(h1data_dpath, 'AirportFlow-%sH%02d.xlsx' % (yyyy, h))
             gen_xlsx_file(terminals, ps_count, ofpath)
+        wb = Workbook()
+        ofpath = opath.join(h1data_dpath, 'AirportFlow-HourRatio-%s.xlsx' % yyyy)
+        for h in HOURS:
+            ws = wb.create_sheet(title='H%02d' % h)
+            ifpath = opath.join(h1data_dpath, 'AirportFlow-%sH%02d.xlsx' % (yyyy, h))
+            wb1 = load_workbook(ifpath)            
+            for row in wb1['Ratio'].rows:
+                ws.append([cell.value for cell in row])
+        wb.save(filename=ofpath)
+        ofpath = opath.join(h1data_dpath, 'AirportFlow-HourCount-%s.xlsx' % yyyy)
+        for h in HOURS:
+            ws = wb.create_sheet(title='H%02d' % h)
+            ifpath = opath.join(h1data_dpath, 'AirportFlow-%sH%02d.xlsx' % (yyyy, h))
+            wb1 = load_workbook(ifpath)
+            for row in wb1['Count'].rows:
+                ws.append([cell.value for cell in row])
+            os.remove(ifpath)
+        wb.save(filename=ofpath)
 
-
-FIGSIZE = (8, 6)
 
 def draw_chart():
     years = [2009, 2010]
@@ -183,8 +185,7 @@ def draw_chart():
     hours = sorted(list(set(hdf['hour'])))
     yhLocs_count = {}
     for year, hour, pt, st, count in hdf.values:
-        yhLocs_count[year, hour, pt, st] = count        
-    #
+        yhLocs_count[year, hour, pt, st] = count
     hyLocs_ratio = {}
     for pt in TERMINALS1:
         for h in hours:
@@ -193,35 +194,37 @@ def draw_chart():
                 sumTrips = sum(yhLocs_count[y, h, pt, st] for st in TERMINALS1)
                 for st in TERMINALS1:
                     hyLocs_ratio[h, y, pt, st] = yhLocs_count[y, h, pt, st] / float(sumTrips) * 100
-                    
+    #
     for pt in TERMINALS1:
         for st in TERMINALS1:
-            img_ofpath = 'FlowChange-%s-%s.pdf' % (pt, st)
-            fig = plt.figure(figsize=FIGSIZE)
-            ax = fig.add_subplot(111)
-            ax.set_xlabel('Hour')
-            ax.set_ylabel('%')
+            img_ofpath = opath.join(h1chart_dpath, 'FlowChange-%s-%s.pdf' % (pt, st))
+            plt.figure(figsize=FIGSIZE)
+            gs = gridspec.GridSpec(2, 1, height_ratios=[3, 1])
+            ax1 = plt.subplot(gs[0])
+            ax1.set_ylabel('%', fontsize=FONT_SIZE)
             for i, y in enumerate([2009, 2010]):
                 plt.plot(range(len(hours)), [hyLocs_ratio[h, y, pt, st] if (h, y, pt, st) in hyLocs_ratio else 0 for h in HOURS],
                          color=clists[i], marker=mlists[i])
-            plt.legend(['2009', '2010'], ncol=1)
-            plt.xticks(range(len(HOURS)), HOURS)        
+            plt.legend(['2009', '2010'], ncol=1, fontsize=FONT_SIZE)
+            plt.xticks(range(len(HOURS)), HOURS)
+            ax1.tick_params(axis='both', which='major', labelsize=FONT_SIZE)
+            plt.setp(ax1.get_xticklabels(), visible=False)
+            #
+            ax2 = plt.subplot(gs[1], sharex=ax1)
+            ydata = []
+            for h in HOURS:
+                d2009 = hyLocs_ratio[h, 2009, pt, st] if (h, 2009, pt, st) in hyLocs_ratio else 0 
+                d2010 = hyLocs_ratio[h, 2010, pt, st] if (h, 2010, pt, st) in hyLocs_ratio else 0 
+                ydata.append(d2010 - d2009)
+            plt.plot(range(len(hours)), ydata, color=clists[2], marker=mlists[2])
+            plt.legend(['2010 - 2009'], ncol=1, fontsize=FONT_SIZE)
+            ax2.tick_params(axis='both', which='major', labelsize=FONT_SIZE)
+            ax2.set_ylabel('%', fontsize=FONT_SIZE)
+            ax2.set_xlabel('Hour', fontsize=FONT_SIZE)
             plt.savefig(img_ofpath, bbox_inches='tight', pad_inches=0)
 
-        
-        
-        
-            hyLocs_ratio[6, 2009, 'T3', 'X']
-        
-    hdf2009 = hdf[(hdf['year'] == 2009)]
-    hdf2010 = hdf[(hdf['year'] == 2010)]
-    
-    
-        
-        
-        
-        
 
 
 if __name__ == '__main__':
-    arrange_datasets()
+    # arrange_datasets()
+    draw_chart()

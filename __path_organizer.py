@@ -22,6 +22,7 @@ aggr_dpath = opath.join(trip_dpath, 'aggrTrip')
 hyp_dpath = opath.join(pf_dpath, 'hypothesis')
 h1_dpath = opath.join(hyp_dpath, 'h1FlowRatios')
 h1data_dpath = opath.join(h1_dpath, '_data')
+h1chart_dpath = opath.join(h1_dpath, 'chart')
 
 
 log_dpath = opath.join(pf_dpath, 'log')
@@ -40,7 +41,8 @@ dir_paths = [data_dpath, geo_dpath, viz_dpath,
              trip_dpath,
              dt_dpath, adt_dpath, aggr_dpath,
              #
-             hyp_dpath, h1_dpath, h1data_dpath,
+             hyp_dpath,
+             h1_dpath, h1data_dpath, h1chart_dpath,
 
             test_dpath
 

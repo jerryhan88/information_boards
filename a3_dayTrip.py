@@ -11,7 +11,7 @@ from __path_organizer import lf_dpath, trip_dpath, dt_dpath
 AM2, AM6 = 2, 6
 TARGET_HOURS = list(range(AM6, 24))
 TARGET_HOURS += list(range(AM2))
-NUM_WORKERS = 6
+NUM_WORKERS = 8
 
 
 def get_target_dates(prefix=None):
