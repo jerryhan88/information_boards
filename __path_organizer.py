@@ -23,6 +23,8 @@ hyp_dpath = opath.join(pf_dpath, 'hypothesis')
 h1_dpath = opath.join(hyp_dpath, 'h1FlowRatios')
 h1data_dpath = opath.join(h1_dpath, '_data')
 h1chart_dpath = opath.join(h1_dpath, 'chart')
+h2_dpath = opath.join(hyp_dpath, 'h2QNumCV')
+h2data_dpath = opath.join(h2_dpath, '_data')
 
 
 log_dpath = opath.join(pf_dpath, 'log')
@@ -144,8 +146,3 @@ HOUR1 = 3600
 HOUR2 = HOUR1 * 2
 MIN1 = 60.0
 CENT = 100.0
-
-
-
-
-terminal_order = ['T1', 'T2', 'T3', 'BudgetT']
