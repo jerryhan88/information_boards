@@ -45,6 +45,7 @@ dir_paths = [data_dpath, geo_dpath, viz_dpath,
              #
              hyp_dpath,
              h1_dpath, h1data_dpath, h1chart_dpath,
+             h2_dpath, h2data_dpath,
 
             test_dpath
 

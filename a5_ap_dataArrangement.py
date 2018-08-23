@@ -39,11 +39,11 @@ def run(yyyy):
     df['queueing'] = df['start_time'] - df['time_enter_airport']
     #
     outliers = set()
-    for cn in ['workingDay', 'duration', 'interTrip', 'untilFirstFree', 'queueing']:
+    for cn in ['duration', 'interTrip', 'untilFirstFree', 'queueing']:
         outliers = outliers.union(set(get_outliers(df[cn])))
     normal_index = set(df.index).difference(outliers)
     filtered_df = df[(df.index.isin(normal_index))]
-    filtered_df = filtered_df.drop(['duration', 'interTrip', 'untilFirstFree', 'queueing'], axis=1)
+    filtered_df = filtered_df.drop(['workingDay', 'duration', 'interTrip', 'untilFirstFree', 'queueing'], axis=1)
     filtered_df.to_csv(ofpath, index=False)
     
 
