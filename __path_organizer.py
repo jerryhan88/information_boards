@@ -23,8 +23,11 @@ hyp_dpath = opath.join(pf_dpath, 'hypothesis')
 h1_dpath = opath.join(hyp_dpath, 'h1FlowRatios')
 h1data_dpath = opath.join(h1_dpath, '_data')
 h1chart_dpath = opath.join(h1_dpath, 'chart')
-h2_dpath = opath.join(hyp_dpath, 'h2QNumCV')
+h2_dpath = opath.join(hyp_dpath, 'h2FSunkCost')
 h2data_dpath = opath.join(h2_dpath, '_data')
+
+h3_dpath = opath.join(hyp_dpath, 'h3QNumCV')
+h3data_dpath = opath.join(h3_dpath, '_data')
 
 
 log_dpath = opath.join(pf_dpath, 'log')
@@ -46,8 +49,9 @@ dir_paths = [data_dpath, geo_dpath, viz_dpath,
              hyp_dpath,
              h1_dpath, h1data_dpath, h1chart_dpath,
              h2_dpath, h2data_dpath,
+             h3_dpath, h3data_dpath,
 
-            test_dpath
+             test_dpath
 
              ]
 

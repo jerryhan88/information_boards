@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import csv
 #
-from __path_organizer import aggr_dpath, h2data_dpath
+from __path_organizer import aggr_dpath, h3data_dpath
 from __common import TERMINALS1, TERMINALS2
 
 AM2, AM6 = 2, 6
@@ -16,7 +16,7 @@ REFRESH_INTERVAL = 5  # minutes
 def arrange_datasets():
     yyyys = ['2009', '2010']
     for yyyy in yyyys:
-        ofpath = opath.join(h2data_dpath, 'apQNum-%s.csv' % yyyy)
+        ofpath = opath.join(h3data_dpath, 'apQNum-%s.csv' % yyyy)
         terminals = TERMINALS1[:] if yyyy != '2018' else TERMINALS2[:]
         terminals.pop(terminals.index('X'))
         with open(ofpath, 'w') as w_csvfile:
